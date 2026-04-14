@@ -11,7 +11,7 @@ app.get('/', (req, res) => {
 });
 
 // Servir les fichiers statiques du frontend
-app.use(express.static(path.join(__dirname, 'src', 'frontend')));
+app.use(express.static(path.join(__dirname, 'app', 'frontend')));
 
 // Démarrer le serveur
 const PORT = process.env.PORT || 3000;
