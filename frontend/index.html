@@ -11,9 +11,8 @@
 <header class="site-header">
     <div class="header-inner">
         <div class="logo">
-            <span class="logo-dot"></span>
-            LE LOUNGE
-        </div>
+    <img src="assets/lounge-banner.png" alt="Le Lounge" style="height: 60px; width: auto;">
+</div>
 
         <nav class="main-nav">
             <a href="index.html" class="nav-link">Accueil</a>
@@ -38,7 +37,7 @@
             </p>
 
             <div class="hero-actions">
-                <button class="btn btn-primary">Créer un topic</button>
+                 <a href="create-topic.html"><button class="btn btn-primary">Créer un topic</button></a>
                 <a href="topics.html" class="btn btn-ghost">Explorer</a>
             </div>
         </section>
@@ -59,56 +58,34 @@
             </div>
         </div>
 
-        <!-- TOPICS -->
-        <section class="topics-list">
+<!-- TOPICS -->
+<section class="topics-list">
 
-            <div class="topic-card">
-                <div class="topic-card-num">#1</div>
+    <!-- EPINGLE -->
+    <div class="topic-card">
+        <div class="topic-card-num">📌</div>
 
-                <div class="topic-card-body">
-                    <div class="topic-card-meta">
-                        <span class="badge badge-open">Ouvert</span>
-                        <span class="tag tag-sm">Dev</span>
-                    </div>
-
-                    <div class="topic-card-title">
-                        <a href="#">Comment apprendre JavaScript efficacement ?</a>
-                    </div>
-
-                    <div class="topic-card-info">
-                        <span>par Malek</span>
-                        <span class="sep">•</span>
-                        <span>12 Avril 2026</span>
-                    </div>
-                </div>
-
-                <div class="topic-card-arrow">→</div>
+        <div class="topic-card-body">
+            <div class="topic-card-meta">
+                <span class="badge badge-admin">Épinglé</span>
+                <span class="tag tag-sm">Guide</span>
             </div>
 
-            <div class="topic-card topic-closed">
-                <div class="topic-card-num">#2</div>
-
-                <div class="topic-card-body">
-                    <div class="topic-card-meta">
-                        <span class="badge badge-closed">Fermé</span>
-                        <span class="tag tag-sm">Gaming</span>
-                    </div>
-
-                    <div class="topic-card-title">
-                        <a href="#">Votre jeu préféré en 2026 ?</a>
-                    </div>
-
-                    <div class="topic-card-info">
-                        <span>par User123</span>
-                        <span class="sep">•</span>
-                        <span>13 Avril 2026</span>
-                    </div>
-                </div>
-
-                <div class="topic-card-arrow">→</div>
+            <div class="topic-card-title">
+                <a href="/topics/guide.html">Guide du forum - Bien commencer sur Le Lounge</a>
             </div>
 
-        </section>
+            <div class="topic-card-info">
+                <span>Administration</span>
+                <span class="sep">•</span>
+                <span>Règles & fonctionnement</span>
+            </div>
+        </div>
+
+        <div class="topic-card-arrow">→</div>
+    </div>
+
+</section>
 
         <!-- PAGINATION -->
         <div class="pagination">
@@ -123,7 +100,9 @@
 <!-- FOOTER -->
 <footer class="site-footer">
     <div class="footer-inner">
-        <div class="footer-logo">Le Lounge</div>
+        <div class="logo">
+    <img src="assets/lounge-transparent.png" alt="Le Lounge" style="height: 60px; width: auto;">
+</div>
         <div>© 2026 Forum Ynov</div>
     </div>
 </footer>
