@@ -36,34 +36,33 @@
 </div>
 
         <p class="auth-sub">Crée ton compte sur Le Lounge</p>
-
         <!-- REGISTER -->
-        <form class="auth-form">
+        <form id="formInscription" class="boiteformulaire">
             <div class="form-group">
                 <label>Nom d'utilisateur</label>
-                <input type="text" placeholder="Choisis un pseudo">
+                <input type="text" placeholder="Choisis un pseudo" id ="pseudo">
             </div>
 
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" placeholder="ton@email.com">
+                <input type="email" placeholder="ton@email.com" id="email">
             </div>
 
             <div class="form-group">
                 <label>Mot de passe</label>
-                <input type="password" placeholder="••••••••">
+                <input type="password" placeholder="••••••••" id="mdp">
             </div>
 
             <div class="form-group">
                 <label>Confirme ton mot de passe</label>
-                <input type="password" placeholder="••••••••">
+                <input type="password" placeholder="••••••••" id="mdpVerif">
             </div>
 
             <button class="btn btn-primary btn-full">S'inscrire</button>
         </form>
 
         <div class="auth-footer">
-            Déjà un compte ? <a href="connexion.html">Se connecter</a>
+            Déjà un compte ? <a href="/connexion">Se connecter</a>
         </div>
 
     </div>
@@ -78,6 +77,6 @@
         <div>© 2026 Forum Ynov</div>
     </div>
 </footer>
-
+ <script src="/script/inscription.js"></script>
 </body>
 </html>

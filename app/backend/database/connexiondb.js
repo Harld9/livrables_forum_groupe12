@@ -1,5 +1,15 @@
 const mysql = require('mysql2/promise');// permet à node de comprendre le SQL
-require('dotenv').config(); // permet d'utiliser les variables du .env
+const path = require('node:path')
+const fs = require('node:fs')
+
+// Charge le .env de app, indépendamment du dossier de lancement de Node.
+const dotenv = require('dotenv')
+const envCandidates = [
+    path.join(__dirname, '..', '..', '.env'),
+    path.join(process.cwd(), '.env')
+]
+const envPath = envCandidates.find((candidate) => fs.existsSync(candidate))
+dotenv.config(envPath ? { path: envPath } : {})
 
 // on initialise les credentials via dotenv
 const db = mysql.createPool({
