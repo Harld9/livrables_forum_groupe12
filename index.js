@@ -36,6 +36,11 @@ app.get('/inscription', (req, res) => {
   res.sendFile(path.join(__dirname, 'app/frontend/pages/inscription.html'))
 });
 
+// On importe et branche le router des utilisateurs sur /api
+// Toutes les routes de utilisateurRouter seront préfixées par /api
+const utilisateurRouter = require('./app/backend/router/utilisateur')
+app.use('/api', utilisateurRouter)
+
 // Démarrer le serveur
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
