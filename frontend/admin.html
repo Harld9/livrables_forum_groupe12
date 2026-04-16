@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Administration - Le Lounge</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+    <div class="header-inner">
+        <div class="logo">
+            <div class="logo">
+    <img src="assets/lounge-banner.png" alt="Le Lounge" style="height: 60px; width: auto;">
+</div>
+
+        <nav class="main-nav">
+            <a href="index.html" class="nav-link">Accueil</a>
+            <a href="topics.html" class="nav-link">Topics</a>
+            <a href="help.html" class="nav-link">Aide</a>
+            <a href="admin.html" class="nav-link nav-cta">Admin</a>
+        </nav>
+    </div>
+</header>
+
+
+<!-- MAIN -->
+<main class="site-main">
+    <div class="container">
+
+        <!-- HERO -->
+        <section class="hero">
+            <h1 class="hero-title">
+                Administration du <span class="hero-accent">Lounge</span>
+            </h1>
+            <p class="hero-sub">
+                Gestion des utilisateurs, sanctions, archives et annonces.
+            </p>
+        </section>
+
+        <!-- ADMIN TABS -->
+        <div class="admin-tabs filters-bar">
+
+            <div class="tag-filter">
+                <button class="tag tag-active admin-tab" data-tab="users">Gestionnaire</button>
+                <button class="tag admin-tab" data-tab="archives">Archives</button>
+                <button class="tag admin-tab" data-tab="announcement">Annonce</button>
+            </div>
+
+        </div>
+
+        <!-- =========================
+             USERS
+        ========================== -->
+        <section class="admin-panel" id="users">
+
+            <div class="filters-bar">
+                <form class="search-form">
+                    <input class="search-input" type="text" placeholder="Rechercher un utilisateur...">
+                    <button class="btn btn-primary" type="button">Rechercher</button>
+                </form>
+            </div>
+
+            <h2 class="reply-title">Gestion des utilisateurs</h2>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Utilisateur</th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- SQL -->
+                </tbody>
+            </table>
+
+            <br><br>
+
+            <h2 class="reply-title">Gestion des sanctions</h2>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Utilisateur</th>
+                        <th>Type</th>
+                        <th>Raison</th>
+                        <th>Durée</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- SQL -->
+                </tbody>
+            </table>
+
+        </section>
+
+        <!-- =========================
+             ARCHIVES
+        ========================== -->
+        <section class="admin-panel" id="archives" style="display:none;">
+
+            <div class="filters-bar">
+                <form class="search-form">
+                    <input class="search-input" type="text" placeholder="Rechercher un topic archivé...">
+                    <button class="btn btn-primary" type="button">Rechercher</button>
+                </form>
+            </div>
+
+            <h2 class="reply-title">Topics archivés</h2>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Auteur</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- SQL -->
+                </tbody>
+            </table>
+
+            <br><br>
+
+            <div class="filters-bar">
+                <form class="search-form">
+                    <input class="search-input" type="text" placeholder="Rechercher un topic supprimé...">
+                    <button class="btn btn-primary" type="button">Rechercher</button>
+                </form>
+            </div>
+
+            <h2 class="reply-title">Topics supprimés</h2>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Raison</th>
+                        <th>Date suppression</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- SQL -->
+                </tbody>
+            </table>
+
+        </section>
+
+        <!-- =========================
+             ANNOUNCEMENT
+        ========================== -->
+        <section class="admin-panel" id="announcement" style="display:none;">
+
+            <h2 class="reply-title">Créer une annonce</h2>
+
+            <form class="topic-form">
+
+                <div class="form-group">
+                    <label>Titre de l'annonce</label>
+                    <input type="text">
+                </div>
+
+                <div class="form-group">
+                    <label>Contenu</label>
+                    <textarea rows="6"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Priorité</label>
+                    <select>
+                        <option>Normale</option>
+                        <option>Importante</option>
+                        <option>Urgente</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-ghost">Annuler</button>
+                    <button type="button" class="btn btn-primary">Publier</button>
+                </div>
+
+            </form>
+
+        </section>
+
+    </div>
+</main>
+
+
+<!-- FOOTER -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-logo">Le Lounge</div>
+        <div>© 2026 Forum Ynov</div>
+    </div>
+</footer>
+
+
+<!-- JS TABS -->
+<script>
+const tabs = document.querySelectorAll(".admin-tab");
+const panels = document.querySelectorAll(".admin-panel");
+
+tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+
+        tabs.forEach(t => t.classList.remove("tag-active"));
+        tab.classList.add("tag-active");
+
+        const target = tab.dataset.tab;
+
+        panels.forEach(p => {
+            p.style.display = (p.id === target) ? "block" : "none";
+        });
+
+    });
+});
+</script>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="logo">
+    <img src="assets/lounge-transparent.png" alt="Le Lounge" style="height: 60px; width: auto;">
+</div>
+        <div>© 2026 Forum Ynov</div>
+    </div>
+</footer>
+
+</body>
+</html>
