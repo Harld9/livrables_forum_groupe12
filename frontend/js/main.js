@@ -53,47 +53,24 @@ function isAdmin() {
  *  - Déconnecté → affiche "Se connecter / S'inscrire"
  */
 function updateHeader() {
-  const ctaLink = document.querySelector('.nav-cta');
-  if (!ctaLink) return;
+  const nav = document.querySelector('.main-nav');
+  if (!nav) return;
 
   const user = getSession();
+  const cta = nav.querySelector('.nav-cta');
+
+  if (!cta) return;
 
   if (user) {
-    // Remplace le lien par un menu utilisateur
-    ctaLink.outerHTML = `
-      <div class="nav-user" id="navUserMenu">
-        <button class="btn btn-primary btn-sm nav-user-btn" id="navUserBtn">
-          ${escapeHtml(user.username)} ▾
-        </button>
-        <div class="nav-dropdown" id="navDropdown" style="display:none;">
-          <a href="profile.html" class="dropdown-item">Mon profil</a>
-          ${isAdmin() ? '<a href="admin.html" class="dropdown-item">Administration</a>' : ''}
-          <button class="dropdown-item dropdown-logout" id="logoutBtn">Se déconnecter</button>
-        </div>
-      </div>`;
+    // On garde le lien mais on le transforme
+    cta.textContent = user.username + " ▾";
+    cta.href = "#";
 
-    // Toggle dropdown
-    document.getElementById('navUserBtn').addEventListener('click', (e) => {
-      e.stopPropagation();
-      const dd = document.getElementById('navDropdown');
-      dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
-    });
-
-    // Déconnexion
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      clearSession();
-      window.location.href = 'index.html';
-    });
-
-    // Fermer le dropdown en cliquant ailleurs
-    document.addEventListener('click', () => {
-      const dd = document.getElementById('navDropdown');
-      if (dd) dd.style.display = 'none';
-    });
-
+    cta.classList.add("nav-user");
   } else {
-    ctaLink.href = 'auth.html';
-    ctaLink.textContent = 'Se connecter / S\'inscrire';
+    cta.textContent = "Se connecter / S'inscrire";
+    cta.href = "auth.html";
+    cta.classList.remove("nav-user");
   }
 }
 
