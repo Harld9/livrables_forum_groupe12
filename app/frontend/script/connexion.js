@@ -16,7 +16,7 @@ formulaire.addEventListener('submit', async (event) => {
     // On récupère les valeurs saisies dans les inputs
     const email = document.getElementById('email').value
     const mdp = document.getElementById('mdp').value
-    const rememberMe = document.getElementById('rememberMe').checked // Pour plus tard
+    //const rememberMe = document.getElementById('rememberMe').checked // Pour plus tard
 
     try {
         // On envoie les identifiants à l'API en POST au format JSON
@@ -33,22 +33,11 @@ formulaire.addEventListener('submit', async (event) => {
         const donnees = await reponse.json()
 
         if (reponse.ok) {
-            // On choisit le stockage selon la case "Se souvenir de moi"
-            // localStorage.setItem — persiste même après fermeture du navigateur
-            // sessionStorage.setItem — supprimé à la fermeture de l'onglet
-            // Si coché, on stocke en local (persistant), sinon en session (onglet).
-            const stockage = rememberMe ? localStorage : sessionStorage
-
-            // stockage.setItem — sauvegarde le token et le prénom dans le stockage choisi
-            // On stocke le token JWT pour les futures requêtes authentifiées
-            stockage.setItem('token', donnees.token)
-            // On stocke le prénom pour personnaliser l'interface
-            stockage.setItem('pseuop', donnees.pseudo)
-
-            // On redirige vers l'accueil après connexion réussie
+            // On redirige vers l'accueil après connexion réussie*/
             window.location.href = '/'
+        }
 
-        } else {
+        else {
             // On affiche le message d'erreur renvoyé par le serveur
             afficherErreur(donnees.message)
         }
@@ -60,25 +49,19 @@ formulaire.addEventListener('submit', async (event) => {
     }
 })
 
-// On redirige vers l'accueil si l'utilisateur clique sur Annuler
-// On utilise addEventListener et non onclick dans le HTML — bonne pratique
-document.querySelector('.boutonannulation').addEventListener('click', () => {
-    window.location.href = '/'
-})
-
 // ===== Fonction utilitaire =====
 // On affiche un message d'erreur dans la boite prévue à cet effet dans le HTML
 function afficherErreur(message) {
 
     // On récupère la boite de message déjà présente dans le HTML
-    const boite = document.getElementById('boiteMessage')
+    // const boite = document.getElementById('boiteMessage')
 
     // On ajoute la classe d'erreur pour le style
-    boite.classList.add('message-erreur')
+    // boite.classList.add('message-erreur')
 
     // On affiche la boite — elle est cachée par défaut via .boitemessagecache
-    boite.style.display = 'block'
+    //boite.style.display = 'block'
 
     // On utilise textContent — jamais innerHTML avec des données externes
-    boite.textContent = message
+    // boite.textContent = message
 }

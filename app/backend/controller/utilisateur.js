@@ -57,17 +57,17 @@ exports.inscrireClient = async (req, res) => {
 
 // ===== Connexion =====
 exports.connecterClient = async (req, res) => {
-    const email = req.body.email
+    const identifiant = req.body.email
     const motDePasse = req.body.mdp
 
-    if (!email || !motDePasse) {
+    if (!identifiant || !motDePasse) {
         return res.status(400).json({ message: 'Email et mot de passe requis.' })
     }
 
     try {
         const [resultat] = await db.query(
-            'SELECT idUtilisateur, pseudo, motDePasse FROM Utilisateur WHERE email = ?',
-            [email]
+            'SELECT idUtilisateur, pseudo, motDePasse FROM Utilisateur WHERE email = ? OR pseudo = ?',
+            [identifiant, identifiant]
         )
 
         if (resultat.length === 0) {
