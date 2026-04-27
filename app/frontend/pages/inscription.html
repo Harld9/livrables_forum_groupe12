@@ -1,81 +1,93 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Le Lounge - Inscription</title>
-    <link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
-
-<header class="site-header">
-    <div class="header-inner">
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
         <div class="logo">
-            <img src="/assets/lounge-banner.png" alt="Le Lounge" style="height: 60px; width: auto;">
+          <img
+            src="/assets/lounge-banner.png"
+            alt="Le Lounge"
+            style="height: 60px; width: auto"
+          />
         </div>
 
         <nav class="main-nav">
-            <a href="/" class="nav-link">Accueil</a>
-            <a href="/topics" class="nav-link">Topics</a>
-            <a href="/help" class="nav-link">Aide</a>
-            <a href="/connexion" class="nav-link nav-cta">Connexion</a>
+          <a href="/" class="nav-link">Accueil</a>
+          <a href="/topics" class="nav-link">Topics</a>
+          <a href="/help" class="nav-link">Aide</a>
+          <a href="/connexion" class="nav-link nav-cta" id="boutonconnexion"
+            >Connexion</a
+          >
         </nav>
-    </div>
-</header>
+      </div>
+    </header>
 
-<main class="auth-wrapper">
-
-    <div class="auth-deco">
+    <main class="auth-wrapper">
+      <div class="auth-deco">
         <div class="deco-blob deco-1"></div>
         <div class="deco-blob deco-2"></div>
-    </div>
+      </div>
 
-    <div class="auth-card">
+      <div class="auth-card">
         <div class="logo">
-    <img src="/assets/lounge-bannerblack.png" alt="Le Lounge" style="height: 70px; width: auto;">
-</div>
+          <img
+            src="/assets/lounge-bannerblack.png"
+            alt="Le Lounge"
+            style="height: 70px; width: auto"
+          />
+        </div>
 
         <p class="auth-sub">Crée ton compte sur Le Lounge</p>
         <!-- REGISTER -->
         <form id="formInscription" class="boiteformulaire">
-            <div class="form-group">
-                <label>Nom d'utilisateur</label>
-                <input type="text" placeholder="Choisis un pseudo" id ="pseudo">
-            </div>
+          <div class="form-group">
+            <label>Nom d'utilisateur</label>
+            <input type="text" placeholder="Choisis un pseudo" id="pseudo" />
+          </div>
 
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" placeholder="ton@email.com" id="email">
-            </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" placeholder="ton@email.com" id="email" />
+          </div>
 
-            <div class="form-group">
-                <label>Mot de passe</label>
-                <input type="password" placeholder="••••••••" id="mdp">
-            </div>
+          <div class="form-group">
+            <label>Mot de passe</label>
+            <input type="password" placeholder="••••••••" id="mdp" />
+          </div>
 
-            <div class="form-group">
-                <label>Confirme ton mot de passe</label>
-                <input type="password" placeholder="••••••••" id="mdpVerif">
-            </div>
+          <div class="form-group">
+            <label>Confirme ton mot de passe</label>
+            <input type="password" placeholder="••••••••" id="mdpVerif" />
+          </div>
 
-            <button class="btn btn-primary btn-full">S'inscrire</button>
+          <button class="btn btn-primary btn-full">S'inscrire</button>
         </form>
 
         <div class="auth-footer">
-            Déjà un compte ? <a href="/connexion">Se connecter</a>
+          Déjà un compte ? <a href="/connexion">Se connecter</a>
         </div>
+      </div>
+    </main>
 
-    </div>
-</main>
-
-<!-- FOOTER -->
-<footer class="site-footer">
-    <div class="footer-inner">
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div class="footer-inner">
         <div class="logo">
-    <img src="/assets/lounge-transparent.png" alt="Le Lounge" style="height: 60px; width: auto;">
-</div>
+          <img
+            src="/assets/lounge-transparent.png"
+            alt="Le Lounge"
+            style="height: 60px; width: auto"
+          />
+        </div>
         <div>© 2026 Forum Ynov</div>
-    </div>
-</footer>
- <script src="/script/inscription.js"></script>
-</body>
+      </div>
+    </footer>
+    <script src="/script/inscription.js"></script>
+    <script src="/script/main.js"></script>
+  </body>
 </html>

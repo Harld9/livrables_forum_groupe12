@@ -33,8 +33,14 @@ formulaire.addEventListener('submit', async (event) => {
         const donnees = await reponse.json()
 
         if (reponse.ok) {
+            const stockage = sessionStorage
+            // On stocke le token JWT pour les futures requêtes authentifiées
+            stockage.setItem('token', donnees.token)
+            // On stocke le prénom pour personnaliser l'interface
+            stockage.setItem('pseudo', donnees.pseudo)
             // On redirige vers l'accueil après connexion réussie*/
             window.location.href = '/'
+
         }
 
         else {
