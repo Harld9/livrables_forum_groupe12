@@ -10,9 +10,8 @@
 <header class="site-header">
     <div class="header-inner">
         <div class="logo">
-            <div class="logo">
-    <img src="/assets/lounge-banner.png" alt="Le Lounge" style="height: 60px; width: auto;">
-</div>
+            <img src="/assets/lounge-banner.png" alt="Le Lounge" style="height: 60px; width: auto;">
+        </div>
 
         <nav class="main-nav">
             <a href="/" class="nav-link">Accueil</a>
@@ -38,7 +37,7 @@
         <p class="auth-sub">Connecte-toi ou crée un compte</p>
 
         <!-- LOGIN -->
-        <form class="auth-form" <form id="formConnexion" >
+        <form id="formConnexion" class="auth-form">
             <div class="form-group">
                 <label>Nom d'utilisateur ou email</label>
                 <input type="text" placeholder="Pseudo ou email" id="email">
@@ -48,6 +47,8 @@
                 <label>Mot de passe</label>
                 <input type="password" placeholder="••••••••" id="mdp">
             </div>
+
+            <p id="boiteMessage" class="message-erreur" style="display: none;"></p>
 
             <button class="btn btn-primary btn-full">Se connecter</button>
         </form>
