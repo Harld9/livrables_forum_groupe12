@@ -63,7 +63,7 @@ function afficherErreur(message) {
         erreur.classList.add('message-erreur')
 
         // On insère le message juste avant les boutons du formulaire
-        const boutons = document.querySelector('.boutonsformulaire')
+        const boutons = document.querySelector('#formInscription button')
         boutons.parentNode.insertBefore(erreur, boutons)
     }
 
