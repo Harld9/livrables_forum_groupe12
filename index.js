@@ -36,6 +36,31 @@ app.get('/inscription', (req, res) => {
   res.sendFile(path.join(__dirname, 'app/frontend/pages/inscription.html'))
 });
 
+// On sert la page d'accueil
+app.get('/admin', (req, res) =>
+  res.sendFile(path.join(__dirname, 'app/frontend/pages/admin.html'))
+)
+
+// On sert la page d'accueil
+app.get('/create-topic', (req, res) =>
+  res.sendFile(path.join(__dirname, 'app/frontend/pages/create-topic.html'))
+)
+
+// On sert la page d'accueil
+app.get('/guide', (req, res) =>
+  res.sendFile(path.join(__dirname, 'app/frontend/pages/guide.html'))
+)
+
+// On sert la page d'accueil
+app.get('/topics', (req, res) =>
+  res.sendFile(path.join(__dirname, 'app/frontend/pages/topics.html'))
+)
+
+// On sert la page d'accueil
+app.get('/help', (req, res) =>
+  res.sendFile(path.join(__dirname, 'app/frontend/pages/help.html'))
+)
+
 // On importe et branche le router des utilisateurs sur /api
 // Toutes les routes de utilisateurRouter seront préfixées par /api
 const utilisateurRouter = require('./app/backend/router/utilisateur')
