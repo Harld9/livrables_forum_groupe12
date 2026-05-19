@@ -5,9 +5,7 @@ VALUES
     ('Michelee', 'root', 'Michelee@gmail.com'),
     ('Rita', 'root', 'rita@gmail.com'),
     ('Tetrap', 'root', 'Tetrap@gmail.com'),
-    ('Kabine', 'root', 'Kabinette@gmail.com') ('MOLP', 'root', 'MOLP@gmail.com');
-
-('mollll', 'root', 'Mollll@gmail.com');
+    ('Kabine', 'root', 'Kabinette@gmail.com') ('MOLP', 'root', 'MOLP@gmail.com') ('mollll', 'root', 'Mollll@gmail.com');
 
 -- Insertions de topics fictifs dans la table topic
 INSERT INTO
