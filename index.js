@@ -7,6 +7,7 @@
 const express = require('express');
 const path = require('node:path')
 const app = express();
+const auth = require('./middleware/auth')
 
 // On importe cors pour autoriser les requêtes depuis d'autres origines
 const cors = require('cors')
@@ -60,6 +61,9 @@ app.get('/topics', (req, res) =>
 app.get('/help', (req, res) =>
   res.sendFile(path.join(__dirname, 'app/frontend/pages/help.html'))
 )
+
+const topicCtrl = require('./app/backend/controller/topic')
+app.post('/api/topics', auth.verifierToken, topicCtrl.creerTopic)
 
 // On importe et branche le router des utilisateurs sur /api
 // Toutes les routes de utilisateurRouter seront préfixées par /api

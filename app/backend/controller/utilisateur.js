@@ -81,11 +81,21 @@ exports.connecterClient = async (req, res) => {
             return res.status(401).json({ message: 'Identifiants invalides.' })
         }
 
+        // On crée un jeton JWT signé avec les infos de l'utilisateur
+        // Ce jeton sera stocké côté client pour identifier l'utilisateur sur les prochaines requêtes.
+        const jeton = jwt.sign(
+            { id: utilisateur.idUtilisateur, pseudo: utilisateur.pseudo }, // on embarque l'id et le prénom
+            process.env.CLEJWT,  // on utilise la clé secrète du .env — jamais en dur dans le code
+            { expiresIn: '24h' } // on expire le jeton après 24h pour la sécurité
+        )
+
         return res.status(200).json({
             message: 'Connexion réussie.',
             idUtilisateur: utilisateur.idUtilisateur,
-            pseudo: utilisateur.pseudo
+            pseudo: utilisateur.pseudo,
+            token: jeton
         })
+
     } catch (erreur) {
         console.error(erreur)
         return res.status(500).json({ message: 'Erreur lors de la connexion.' })
