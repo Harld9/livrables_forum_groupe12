@@ -5,10 +5,10 @@ const db = require('../database/connexiondb.js')
 exports.creerTopic = async (req, res) => {
     const titre = req.body.titre;
     const contenu = req.body.contenu;
-    const idUtilisateur = req.auth.idUtilisateur
+    const idUtilisateur = req.auth.id
 
 
-    if (!titre || !contenu || !idUtilisateur) {
+    if (!titre || !contenu) {
         return res.status(400).json({ message: 'Champs requis manquants.' })
     }
 

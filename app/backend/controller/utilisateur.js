@@ -1,5 +1,6 @@
 // On importe la connexion à la base de données
 const db = require('../database/connexiondb.js')
+const jwt = require('jsonwebtoken');
 
 // Import de crypto natif à node.js pour hacher les mots de passe
 const crypto = require('crypto')
@@ -11,7 +12,7 @@ exports.inscrireClient = async (req, res) => {
     // Les noms correspondent aux id des inputs dans inscription.html
     const pseudo = req.body.pseudo
     const email = req.body.email
-    const motDePasse = req.body.mdp
+    const motDePasse = req.body.motDePasse
 
     if (!pseudo || !email || !motDePasse) {
         return res.status(400).json({ message: 'Champs requis manquants.' })
@@ -57,8 +58,9 @@ exports.inscrireClient = async (req, res) => {
 
 // ===== Connexion =====
 exports.connecterClient = async (req, res) => {
-    const identifiant = req.body.email
-    const motDePasse = req.body.mdp
+    const email = req.body.email
+    const motDePasse = req.body.motDePasse
+    const identifiant = req.body.identifiant
 
     if (!identifiant || !motDePasse) {
         return res.status(400).json({ message: 'Email et mot de passe requis.' })
