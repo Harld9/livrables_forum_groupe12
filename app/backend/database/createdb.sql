@@ -8,7 +8,7 @@ CREATE TABLE
       idUtilisateur INT AUTO_INCREMENT,
       pseudo VARCHAR(50) UNIQUE,
       motDePasse VARCHAR(128),
-      dateDeCreation DATETIME DEFAULT getDate (),
+      dateDeCreation DATETIME DEFAULT CURRENT_TIMESTAMP,
       email VARCHAR(255) UNIQUE,
       typeCompte VARCHAR(50),
       photoDeProfil VARCHAR(255),
@@ -21,10 +21,10 @@ CREATE TABLE
 CREATE TABLE
    Topic (
       idTopic INT AUTO_INCREMENT,
-      dateDeCreation DATETIME DEFAULT getDate (),
+      dateDeCreation DATETIME DEFAULT CURRENT_TIMESTAMP,
       titre VARCHAR(50),
       contenu TEXT,
-      etat VARCHAR(50),
+      etat VARCHAR(50) DEFAULT 'OUVERT',
       idUtilisateur INT NOT NULL,
       PRIMARY KEY (idTopic),
       FOREIGN KEY (idUtilisateur) REFERENCES Utilisateur (idUtilisateur)
@@ -43,7 +43,7 @@ CREATE TABLE
    Message (
       idMessage INT AUTO_INCREMENT,
       contenu TEXT,
-      dateEnvoi DATETIME DEFAULT getDate (),
+      dateEnvoi DATETIME DEFAULT CURRENT_TIMESTAMP,
       image VARCHAR(255),
       idUtilisateur INT NOT NULL,
       idTopic INT NOT NULL,
