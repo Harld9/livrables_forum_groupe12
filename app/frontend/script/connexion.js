@@ -26,7 +26,7 @@ formulaire.addEventListener('submit', async (event) => {
             headers: { 'Content-Type': 'application/json' },
             // On convertit l'objet JS en JSON
             // Les clés correspondent exactement à req.body.email et req.body.mdp dans le controller
-            body: JSON.stringify({ email, mdp })
+            body: JSON.stringify({ identifiant: email, motDePasse: mdp })
         })
 
         // On convertit la réponse HTTP brute en objet JS
