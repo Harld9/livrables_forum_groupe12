@@ -10,7 +10,7 @@ CREATE TABLE
       motDePasse VARCHAR(128),
       dateDeCreation DATETIME DEFAULT CURRENT_TIMESTAMP,
       email VARCHAR(255) UNIQUE,
-      typeCompte VARCHAR(50),
+      typeCompte VARCHAR(50) DEFAULT "Utilisateur",
       photoDeProfil VARCHAR(255),
       Biographie TEXT,
       derniereConnexion DATETIME,
