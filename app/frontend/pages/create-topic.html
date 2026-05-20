@@ -48,6 +48,7 @@
             <input
               type="text"
               placeholder="Ex : Vous pensez quoi de cette série/film ?"
+              id="titreTopic"
             />
             <span class="form-hint"
               >Sois clair et précis pour attirer des réponses.</span
@@ -57,7 +58,11 @@
           <!-- CONTENT -->
           <div class="form-group">
             <label>Contenu <span class="required">*</span></label>
-            <textarea rows="8" placeholder="Décris ton sujet..."></textarea>
+            <textarea
+              rows="8"
+              placeholder="Décris ton sujet..."
+              id="contenuTopic"
+            ></textarea>
             <span class="form-hint"
               >Décris ton sujet en détail pour encourager les discussions.</span
             >
@@ -124,7 +129,7 @@
           <!-- ACTIONS -->
           <div class="form-actions">
             <a href="/topics" class="btn btn-ghost">Annuler</a>
-            <button type="button" class="btn btn-primary">
+            <button type="button" class="btn btn-primary" id="boutonPublier">
               Publier le topic
             </button>
           </div>

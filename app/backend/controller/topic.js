@@ -32,10 +32,14 @@ exports.creerTopic = async (req, res) => {
         `
 
         // On envoie la requête à la base de données avec les valeurs dans le bon ordre
-        await db.query(sql, [titre, contenu, idUtilisateur])
+        const [resultat] = await db.query(sql, [titre, contenu, idUtilisateur])
+
+        return resultat.insertId
 
         // On confirme que l'inscription s'est bien passée avec un code 201 (créé)
         res.status(201).json({ message: 'Publication du topic réussie !' })
+
+
 
     } catch (erreur) {
         // On affiche l'erreur dans le terminal pour déboguer
