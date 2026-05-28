@@ -3,7 +3,13 @@ const router = express.Router()
 const auth = require('../middleware/authentification')
 const topic = require('../controller/topic')
 
-// On branche POST /api/topics → Poster un topic
-router.post('/topics', auth.verifierToken, topic.creerTopic)
+// On branche POST /api/creerTopic → Poster un topic
+router.post('/creerTopic', auth.verifierToken, topic.creerTopic)
+
+// On branche GET /api/afficherTopic → Afficher un topic | :id permet de mettre dynamiquement l'id dans l'url de la route
+router.get('/afficherTopic/:idTopic', topic.afficherTopic)
+
+// On branche post /api/creerMessage → Creer un message
+router.post('/creerMessage', auth.verifierToken, topic.creerMessage)
 
 module.exports = router

@@ -47,6 +47,11 @@ app.get('/create-topic', (req, res) =>
 )
 
 // On sert la page d'accueil
+app.get('/topicTemplate', (req, res) =>
+  res.sendFile(path.join(__dirname, 'app/frontend/pages/topicTemplate.html'))
+)
+
+// On sert la page d'accueil
 app.get('/guide', (req, res) =>
   res.sendFile(path.join(__dirname, 'app/frontend/pages/guide.html'))
 )

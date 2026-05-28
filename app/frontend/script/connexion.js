@@ -14,7 +14,7 @@ formulaire.addEventListener('submit', async (event) => {
     event.preventDefault()
 
     // On récupère les valeurs saisies dans les inputs
-    const email = document.getElementById('email').value
+    const identifiant = document.getElementById('identifiant').value
     const mdp = document.getElementById('mdp').value
     //const rememberMe = document.getElementById('rememberMe').checked // Pour plus tard
 
@@ -26,7 +26,7 @@ formulaire.addEventListener('submit', async (event) => {
             headers: { 'Content-Type': 'application/json' },
             // On convertit l'objet JS en JSON
             // Les clés correspondent exactement à req.body.email et req.body.mdp dans le controller
-            body: JSON.stringify({ email, mdp })
+            body: JSON.stringify({ "identifiant": identifiant, "mdp": mdp })
         })
 
         // On convertit la réponse HTTP brute en objet JS
@@ -60,14 +60,14 @@ formulaire.addEventListener('submit', async (event) => {
 function afficherErreur(message) {
 
     // On récupère la boite de message déjà présente dans le HTML
-    // const boite = document.getElementById('boiteMessage')
+    const boite = document.getElementById('boiteMessage')
 
     // On ajoute la classe d'erreur pour le style
-    // boite.classList.add('message-erreur')
+    boite.classList.add('message-erreur')
 
     // On affiche la boite — elle est cachée par défaut via .boitemessagecache
-    //boite.style.display = 'block'
+    boite.style.display = 'block'
 
     // On utilise textContent — jamais innerHTML avec des données externes
-    // boite.textContent = message
+    boite.textContent = message
 }

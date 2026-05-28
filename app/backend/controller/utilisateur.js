@@ -58,8 +58,8 @@ exports.inscrireClient = async (req, res) => {
 
 // ===== Connexion =====
 exports.connecterClient = async (req, res) => {
-    const email = req.body.email
-    const motDePasse = req.body.motDePasse
+
+    const motDePasse = req.body.mdp
     const identifiant = req.body.identifiant
 
     if (!identifiant || !motDePasse) {
