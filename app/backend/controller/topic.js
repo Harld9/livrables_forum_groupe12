@@ -76,3 +76,38 @@ exports.afficherTopic = async (req, res) => {
         res.status(500).json({ message: "Erreur lors de la demande du topic." })
     }
 }
+
+exports.creerMessage = async (req, res) => {
+
+    const idTopic = req.body.idTopic
+    const contenu = req.body.message
+    const idUtilisateur = req.auth.id
+
+    if (!message) {
+        return res.status(400).json({ message: 'Champs requis manquants.' })
+    }
+
+    try {
+        // On prépare la requête d'insertion
+        // On utilise des ? pour éviter les injections SQL
+        const sql = `
+            INSERT INTO message (contenu, idUtilisateur, idTopic, dateDeCreation)
+            VALUES (?, ?, ?,CURDATE())
+        `
+
+        // On envoie la requête à la base de données avec les valeurs dans le bon ordre
+        const [resultat] = await db.query(sql, [message, idUtilisateur, idTopic])
+
+
+        // On confirme que l'inscription s'est bien passée avec un code 201 (créé) et on retourne l'id du topic
+        res.status(201).json({ message: 'Publication du message réussie !', id: resultat.insertId })
+
+
+
+    } catch (erreur) {
+        // On affiche l'erreur dans le terminal pour déboguer
+        console.error(erreur)
+        // On informe le client qu'une erreur s'est produite côté serveur
+        res.status(500).json({ message: "Erreur lors de la publication du message." })
+    }
+}

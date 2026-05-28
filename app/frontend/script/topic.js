@@ -45,15 +45,35 @@ async function afficherTopic() {
 
 }
 
-async function publierMessage() {
-
-    try { // On demande les données à l'API en GET au format JSON
-        const reponse = await fetch(`/api/creerMessage`, {
+async function publierMessage(e) {
+    e.preventDefault()
+    const message = document.getElementById('reply-text')
+    const contenuMessage = message.value
+    const jeton = sessionStorage.getItem('token')
+    try {
+        // On envoie les données à l'API en POST au format JSON
+        const reponse = await fetch('/api/creerMessage', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jeton },
+            // On convertit l'objet JS en JSON pour l'envoyer
+            body: JSON.stringify({ message: contenuMessage, idTopic: idUrl })
         })
+
+        const donnees = await reponse.json()
+
+        if (reponse.ok) {
+            // On actualise la page pour voir le nouveau message 
+            window.location.reload()
+        } else {
+            // On affiche le message d'erreur renvoyé par le serveur
+            afficherErreur(donnees.message)
+        }
+    } catch (erreur) {
+        // On affiche une erreur générique si le fetch échoue (réseau, serveur down...)
+        console.error('Erreur de connexion :', erreur)
+        afficherErreur('Erreur réseau, veuillez réessayer.')
     }
-    catch (erreur) { console.log(erreur) }
+
 }
 
 // Fonction pour créer un nouveau topic (utilisée sur create-topic.html)
@@ -65,6 +85,7 @@ if (document.getElementById('titreTopic')) {
     titre = document.getElementById('titreTopic')
     contenu = document.getElementById('contenuTopic')
     const boutonPublier = document.getElementById('boutonPublier')
+
     if (boutonPublier) {
         boutonPublier.addEventListener("click", publier);
     }
@@ -116,6 +137,12 @@ function afficherErreur(message) {
         console.error('Message d\'erreur:', message)
     }
 }
+if (document.getElementById('topic-title')) {
+    afficherTopic()
 
-afficherTopic()
+    if (document.getElementById('boutonPublier')) {
+        const boutonPublier = document.getElementById('boutonPublier')
+        boutonPublier.addEventListener("click", publierMessage)
+    }
+}
 
