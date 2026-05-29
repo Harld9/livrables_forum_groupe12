@@ -58,7 +58,6 @@ exports.inscrireClient = async (req, res) => {
 
 // ===== Connexion =====
 exports.connecterClient = async (req, res) => {
-
     const motDePasse = req.body.mdp
     const identifiant = req.body.identifiant
 

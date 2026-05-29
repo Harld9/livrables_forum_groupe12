@@ -2,30 +2,37 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Administration - Le Lounge</title>
-    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
   </head>
 
   <body>
     <!-- HEADER -->
     <header class="site-header">
-      
       <div class="header-inner">
-        <div class="logo">
-          <img
-            src="/assets/lounge-banner.png"
-            alt="Le Lounge"
-            style="height: 60px; width: auto"
-          />
+        <div class="header-left">
+          <div class="logo">
+            <img
+              src="assets/lounge-banner.png"
+              alt="Le Lounge"
+              style="height: 40px; width: auto"
+            />
+          </div>
+          <span class="admin-badge">Admin</span>
         </div>
 
         <nav class="main-nav">
-          <a href="/" class="nav-link">Accueil</a>
-          <a href="/topics" class="nav-link">Topics</a>
-          <a href="/help" class="nav-link">Aide</a>
-          <a href="/admin" class="nav-link nav-cta" id="boutonconnexion"
-            >Admin</a
-          >
+          <a href="index.html" class="nav-link">Accueil</a>
+          <a href="topics.html" class="nav-link">Topics</a>
+          <a href="help.html" class="nav-link">Aide</a>
+          <a href="admin.html" class="nav-link nav-cta">Admin</a>
         </nav>
       </div>
     </header>
@@ -35,12 +42,31 @@
       <div class="container">
         <!-- HERO -->
         <section class="hero">
-          <h1 class="hero-title">
-            Administration du <span class="hero-accent">Lounge</span>
-          </h1>
-          <p class="hero-sub">
-            Gestion des utilisateurs, sanctions, archives et annonces.
-          </p>
+          <div>
+            <div class="hero-label">Panneau d'administration</div>
+            <h1 class="hero-title">
+              Administration du <span class="hero-accent">Lounge</span>
+            </h1>
+            <p class="hero-sub">
+              Gestion des utilisateurs, sanctions, archives et annonces.
+            </p>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-chip">
+              <span class="stat-chip-value" id="stat-users">—</span>
+              <span class="stat-chip-label">Membres</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-chip">
+              <span class="stat-chip-value" id="stat-topics">—</span>
+              <span class="stat-chip-label">Topics</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-chip">
+              <span class="stat-chip-value" id="stat-ban">—</span>
+              <span class="stat-chip-label">Sanctions</span>
+            </div>
+          </div>
         </section>
 
         <!-- ADMIN TABS -->
@@ -67,45 +93,47 @@
                 type="text"
                 placeholder="Rechercher un utilisateur..."
               />
-              <button class="btn btn-primary" type="button">Rechercher</button>
+              <button class="btn btn-primary btn-sm" type="button">
+                Rechercher
+              </button>
             </form>
           </div>
 
           <h2 class="reply-title">Gestion des utilisateurs</h2>
-
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Utilisateur</th>
-                <th>Email</th>
-                <th>Rôle</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- SQL -->
-            </tbody>
+          <div class="table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Utilisateur</th>
+                  <th>Email</th>
+                  <th>Rôle</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- SQL -->
               </tbody>
-
-          <br /><br />
+            </table>
+          </div>
 
           <h2 class="reply-title">Gestion des sanctions</h2>
-
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Utilisateur</th>
-                <th>Type</th>
-                <th>Raison</th>
-                <th>Durée</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- SQL -->
-            </tbody>
+          <div class="table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Utilisateur</th>
+                  <th>Type</th>
+                  <th>Raison</th>
+                  <th>Durée</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- SQL -->
               </tbody>
+            </table>
+          </div>
         </section>
 
         <!-- =========================
@@ -119,27 +147,28 @@
                 type="text"
                 placeholder="Rechercher un topic archivé..."
               />
-              <button class="btn btn-primary" type="button">Rechercher</button>
+              <button class="btn btn-primary btn-sm" type="button">
+                Rechercher
+              </button>
             </form>
           </div>
 
           <h2 class="reply-title">Topics archivés</h2>
-
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Titre</th>
-                <th>Auteur</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- SQL -->
-            </tbody>
+          <div class="table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Titre</th>
+                  <th>Auteur</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- SQL -->
               </tbody>
-
-          <br /><br />
+            </table>
+          </div>
 
           <div class="filters-bar">
             <form class="search-form">
@@ -148,25 +177,28 @@
                 type="text"
                 placeholder="Rechercher un topic supprimé..."
               />
-              <button class="btn btn-primary" type="button">Rechercher</button>
+              <button class="btn btn-primary btn-sm" type="button">
+                Rechercher
+              </button>
             </form>
           </div>
 
           <h2 class="reply-title">Topics supprimés</h2>
-
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Titre</th>
-                <th>Raison</th>
-                <th>Date suppression</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- SQL -->
-            </tbody>
+          <div class="table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Titre</th>
+                  <th>Raison</th>
+                  <th>Date suppression</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- SQL -->
               </tbody>
+            </table>
+          </div>
         </section>
 
         <!-- =========================
@@ -204,14 +236,6 @@
       </div>
     </main>
 
-    <!-- FOOTER -->
-    <footer class="site-footer">
-      <div class="footer-inner">
-        <div class="footer-logo">Le Lounge</div>
-        <div>© 2026 Forum Ynov</div>
-      </div>
-    </footer>
-
     <!-- JS TABS -->
     <script>
       const tabs = document.querySelectorAll(".admin-tab");
@@ -230,6 +254,23 @@
         });
       });
     </script>
-    <script src="/script/main.js"></script>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="logo">
+          <img
+            src="assets/lounge-transparent.png"
+            alt="Le Lounge"
+            style="height: 32px; width: auto; opacity: 0.5"
+          />
+        </div>
+        <div>© 2026 Forum Ynov</div>
+      </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/admin.js"></script>
+    <link rel="icon" type="image/x-icon" href="assets/lounge-transparent.png" />
   </body>
 </html>

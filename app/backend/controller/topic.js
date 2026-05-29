@@ -56,16 +56,20 @@ exports.afficherTopic = async (req, res) => {
     try {
         // On prépare la requête d'insertion
         // On utilise des ? pour éviter les injections SQL
-        const sql = `
+        const sql1 = `
              SELECT dateDeCreation, titre, contenu,etat , idUtilisateur FROM topic WHERE idTopic = ?
         `
 
+        const sql2 = `
+            SELECT * FROM message WHERE idTopic = ?
+            `
+
         // On envoie la requête à la base de données avec les valeurs dans le bon ordre
-        const [resultat] = await db.query(sql, [idTopic])
+        const [resultatTopic] = await db.query(sql1, [idTopic])
+        const [resultatMessage] = await db.query(sql2, [idTopic])
 
-
-        // On confirme que l'inscription s'est bien passée avec un code 201 (créé) et on retourne l'id du topic
-        res.status(200).json(resultat[0])
+        // On confirme que l'inscription s'est bien passée avec un code 200 et on retourne le topic avec ses messages
+        res.status(200).json({ topic: resultatTopic[0], messages: resultatMessage })
 
 
 
@@ -83,7 +87,7 @@ exports.creerMessage = async (req, res) => {
     const contenu = req.body.message
     const idUtilisateur = req.auth.id
 
-    if (!message) {
+    if (!contenu) {
         return res.status(400).json({ message: 'Champs requis manquants.' })
     }
 
@@ -92,11 +96,11 @@ exports.creerMessage = async (req, res) => {
         // On utilise des ? pour éviter les injections SQL
         const sql = `
             INSERT INTO message (contenu, idUtilisateur, idTopic, dateDeCreation)
-            VALUES (?, ?, ?,CURDATE())
+            VALUES (?, ?, ?, CURDATE())
         `
 
         // On envoie la requête à la base de données avec les valeurs dans le bon ordre
-        const [resultat] = await db.query(sql, [message, idUtilisateur, idTopic])
+        const [resultat] = await db.query(sql, [contenu, idUtilisateur, idTopic])
 
 
         // On confirme que l'inscription s'est bien passée avec un code 201 (créé) et on retourne l'id du topic

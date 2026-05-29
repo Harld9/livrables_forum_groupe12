@@ -28,8 +28,8 @@ async function afficherTopic() {
             console.log('Réussite d\'affichage de la page')
             const titreTopic = document.getElementById('topic-title')
             const contenuTopic = document.getElementById('topic-body')
-            titreTopic.textContent = donnees.titre
-            contenuTopic.textContent = donnees.contenu
+            titreTopic.textContent = donnees.topic.titre
+            contenuTopic.textContent = donnees.topic.contenu
 
         } else {
             afficherErreur(donnees.message)

@@ -43,7 +43,7 @@ CREATE TABLE
    Message (
       idMessage INT AUTO_INCREMENT,
       contenu TEXT,
-      dateEnvoi DATETIME DEFAULT CURRENT_TIMESTAMP,
+      dateDeCreation DATETIME DEFAULT CURRENT_TIMESTAMP,
       image VARCHAR(255),
       idUtilisateur INT NOT NULL,
       idTopic INT NOT NULL,
