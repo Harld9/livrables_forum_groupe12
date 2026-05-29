@@ -23,20 +23,28 @@ async function afficherTopic() {
         })
 
         const donnees = await reponse.json()
-
+        console.log(donnees)
         if (reponse.ok) {
             console.log('Réussite d\'affichage de la page')
             const titreTopic = document.getElementById('topic-title')
             const contenuTopic = document.getElementById('topic-body')
             titreTopic.textContent = donnees.topic.titre
             contenuTopic.textContent = donnees.topic.contenu
+            listeCommentaire = document.getElementById('comments-list')
+            donnees.messages.forEach(reponse => {
+                const divMessage = document.createElement("div")
+                divMessage.textContent = reponse.contenu + " - " + reponse.pseudo
+                listeCommentaire.appendChild(divMessage)
+            });
 
         } else {
             afficherErreur(donnees.message)
             // On redirige vers la page générale des topics*/
             window.location.href = '/topics'
         }
+
     }
+
     catch (erreur) {
         // On affiche une erreur générique si le fetch échoue (réseau, serveur down...)
         console.error('Erreur de connexion :', erreur)
@@ -137,6 +145,109 @@ function afficherErreur(message) {
         console.error('Message d\'erreur:', message)
     }
 }
+
+function formaterDate(dateString) {
+    if (!dateString) {
+        return 'Aujourd\'hui'
+    }
+
+    const date = new Date(dateString)
+    const options = { day: 'numeric', month: 'long' }
+    return date.toLocaleDateString('fr-FR', options)
+}
+
+function creerCarteTopic(topic, index) {
+    const topicCard = document.createElement('div')
+    topicCard.className = 'topic-card'
+
+    const numero = document.createElement('div')
+    numero.className = 'topic-card-num'
+    numero.textContent = '#' + (index + 1)
+
+    const cardBody = document.createElement('div')
+    cardBody.className = 'topic-card-body'
+
+    const meta = document.createElement('div')
+    meta.className = 'topic-card-meta'
+
+    const badge = document.createElement('span')
+    badge.className = 'badge badge-open'
+    badge.textContent = 'Ouvert'
+
+    const tag = document.createElement('span')
+    tag.className = 'tag tag-sm'
+    tag.textContent = 'Forum'
+
+    meta.appendChild(badge)
+    meta.appendChild(tag)
+
+    const titleBlock = document.createElement('div')
+    titleBlock.className = 'topic-card-title'
+
+    const titleLink = document.createElement('a')
+    titleLink.href = '/topicTemplate?idTopic=' + topic.idTopic
+    titleLink.textContent = topic.titre || 'Topic sans titre'
+
+    titleBlock.appendChild(titleLink)
+
+    const info = document.createElement('div')
+    info.className = 'topic-card-info'
+    info.innerHTML = `${topic.pseudo || 'Anonyme'} <span class="sep">•</span> ${formaterDate(topic.dateDeCreation)}`
+
+    cardBody.appendChild(meta)
+    cardBody.appendChild(titleBlock)
+    cardBody.appendChild(info)
+
+    const arrow = document.createElement('div')
+    arrow.className = 'topic-card-arrow'
+    arrow.textContent = '→'
+
+    topicCard.appendChild(numero)
+    topicCard.appendChild(cardBody)
+    topicCard.appendChild(arrow)
+
+    return topicCard
+}
+
+async function afficherTopics() {
+    const topicsList = document.getElementById('topics-list')
+    if (!topicsList) {
+        return
+    }
+
+    try {
+        const reponse = await fetch('/api/topics', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        })
+
+        const topics = await reponse.json()
+
+        if (!reponse.ok) {
+            afficherErreur(topics.message || 'Impossible de charger les topics.')
+            return
+        }
+
+        topicsList.innerHTML = ''
+
+        if (topics.length === 0) {
+            topicsList.innerHTML = '<p class="empty-state">Aucun topic disponible pour le moment.</p>'
+            return
+        }
+
+        topics.forEach((topic, index) => {
+            topicsList.appendChild(creerCarteTopic(topic, index))
+        })
+    } catch (erreur) {
+        console.error('Erreur de chargement des topics :', erreur)
+        topicsList.innerHTML = '<p class="message-erreur">Impossible de charger les topics.</p>'
+    }
+}
+
+if (document.getElementById('topics-list')) {
+    afficherTopics()
+}
+
 if (document.getElementById('topic-title')) {
     afficherTopic()
 

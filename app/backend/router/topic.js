@@ -6,6 +6,9 @@ const topic = require('../controller/topic')
 // On branche POST /api/creerTopic → Poster un topic
 router.post('/creerTopic', auth.verifierToken, topic.creerTopic)
 
+// On branche GET /api/topics → Liste tous les topics
+router.get('/topics', topic.listerTopics)
+
 // On branche GET /api/afficherTopic → Afficher un topic | :id permet de mettre dynamiquement l'id dans l'url de la route
 router.get('/afficherTopic/:idTopic', topic.afficherTopic)
 

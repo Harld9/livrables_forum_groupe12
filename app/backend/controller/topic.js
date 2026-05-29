@@ -2,6 +2,23 @@
 const db = require('../database/connexiondb.js')
 
 //
+exports.listerTopics = async (req, res) => {
+    try {
+        const sql = `
+            SELECT t.idTopic, t.titre, t.contenu, t.dateDeCreation, t.etat, u.pseudo
+            FROM topic t
+            LEFT JOIN Utilisateur u ON t.idUtilisateur = u.idUtilisateur
+            ORDER BY t.dateDeCreation DESC
+        `
+
+        const [resultat] = await db.query(sql)
+        return res.status(200).json(resultat)
+    } catch (erreur) {
+        console.error(erreur)
+        return res.status(500).json({ message: 'Erreur lors du chargement des topics.' })
+    }
+}
+
 exports.creerTopic = async (req, res) => {
     const titre = req.body.titre;
     const contenu = req.body.contenu;
@@ -61,8 +78,12 @@ exports.afficherTopic = async (req, res) => {
         `
 
         const sql2 = `
-            SELECT * FROM message WHERE idTopic = ?
-            `
+            SELECT message.contenu, message.dateDeCreation, utilisateur.pseudo
+            FROM message
+            INNER JOIN utilisateur ON message.idUtilisateur = utilisateur.idUtilisateur
+            WHERE message.idTopic = ?
+            ORDER BY message.dateDeCreation ASC
+        `
 
         // On envoie la requête à la base de données avec les valeurs dans le bon ordre
         const [resultatTopic] = await db.query(sql1, [idTopic])
