@@ -23,7 +23,7 @@ exports.creerTopic = async (req, res) => {
     const titre = req.body.titre;
     const contenu = req.body.contenu;
     const idUtilisateur = req.auth.id
-
+    const tags = req.body.tags
 
     if (!titre || !contenu) {
         return res.status(400).json({ message: 'Champs requis manquants.' })

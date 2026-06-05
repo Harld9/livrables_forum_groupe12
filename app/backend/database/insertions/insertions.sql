@@ -26,3 +26,12 @@ VALUES
         'Bonjour, j''écris ce poste pour avoir votre avis sur le film l''amour Ouf',
         9
     );
+
+-- Insertions de tags  dans la table tag
+INSERT INTO
+    tag (nom)
+VALUES
+    ("film"),
+    ("série"),
+    ("débat"),
+    ("question")
