@@ -7,6 +7,8 @@
 const express = require('express');
 const path = require('node:path')
 const app = express();
+const auth = require('./app/backend/middleware/authentification')
+
 
 // On importe cors pour autoriser les requêtes depuis d'autres origines
 const cors = require('cors')

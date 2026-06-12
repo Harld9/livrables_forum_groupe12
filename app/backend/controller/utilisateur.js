@@ -14,8 +14,19 @@ exports.inscrireClient = async (req, res) => {
     const email = req.body.email
     const motDePasse = req.body.motDePasse
 
+    const mdpRegex = /^(?=.*?[A-Z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/
+    const pseudoRegex = /^[a-zA-Z0-9_-]{3,12}$/
+
     if (!pseudo || !email || !motDePasse) {
         return res.status(400).json({ message: 'Champs requis manquants.' })
+    }
+
+    if (!mdpRegex.test(motDePasse)) {
+        return res.status(400).json({ message: 'Le mot de passe doit contenir au minimum 8 caractères, 1 majuscule, 1 chiffre et un caractère spécial' })
+    }
+
+    if (!pseudoRegex.test(pseudo)) {
+        return res.status(400).json({ message: 'Le pseudo ne peut contenir que des caractères latins et avoir entre 3 et 12 caractères' })
     }
 
     try {

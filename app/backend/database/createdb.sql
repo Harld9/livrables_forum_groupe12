@@ -1,5 +1,4 @@
 CREATE DATABASE IF NOT EXISTS LoungeDB;
-
 USE LoungeDB;
 
 -- ===== TABLE UTILISATEUR =====
@@ -31,12 +30,11 @@ CREATE TABLE
    );
 
 -- ===== TABLE TAG =====
-CREATE TABLE
-   Tag (
-      idTag INT AUTO_INCREMENT,
-      nom VARCHAR(50),
-      PRIMARY KEY (idTag)
-   );
+CREATE TABLE Tag (
+    idTag INT AUTO_INCREMENT,
+    nom VARCHAR(50),
+    PRIMARY KEY (idTag)
+);
 
 -- ===== TABLE MESSAGE =====
 CREATE TABLE
@@ -53,22 +51,26 @@ CREATE TABLE
    );
 
 -- ===== TABLE APPARTENIR =====
-CREATE TABLE
-   Appartenir (
-      idTopic INT,
-      idTag INT,
-      PRIMARY KEY (idTopic, idTag),
-      FOREIGN KEY (idTopic) REFERENCES Topic (idTopic) ON DELETE CASCADE,
-      FOREIGN KEY (idTag) REFERENCES Tag (idTag)
-   );
+CREATE TABLE Appartenir (
+    idTopic INT,
+    idTag INT,
+    PRIMARY KEY (idTopic, idTag),
+    FOREIGN KEY (idTopic)
+        REFERENCES Topic(idTopic)
+        ON DELETE CASCADE,
+    FOREIGN KEY (idTag)
+        REFERENCES Tag(idTag)
+);
 
 -- ===== TABLE EVALUER =====
-CREATE TABLE
-   Evaluer (
-      idUtilisateur INT,
-      idMessage INT,
-      vote SMALLINT,
-      PRIMARY KEY (idUtilisateur, idMessage),
-      FOREIGN KEY (idUtilisateur) REFERENCES Utilisateur (idUtilisateur),
-      FOREIGN KEY (idMessage) REFERENCES Message (idMessage) ON DELETE CASCADE
-   );
+CREATE TABLE Evaluer (
+    idUtilisateur INT,
+    idMessage INT,
+    vote SMALLINT,
+    PRIMARY KEY (idUtilisateur, idMessage),
+    FOREIGN KEY (idUtilisateur)
+        REFERENCES Utilisateur(idUtilisateur),
+    FOREIGN KEY (idMessage)
+        REFERENCES Message(idMessage)
+        ON DELETE CASCADE
+);

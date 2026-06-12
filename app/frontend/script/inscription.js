@@ -13,11 +13,11 @@ document.getElementById('formInscription').addEventListener('submit', async (e) 
     // On récupère les valeurs saisies dans chaque input
     const email = document.getElementById('email').value
     const pseudo = document.getElementById('pseudo').value
-    const mdp = document.getElementById('mdp').value
+    const motDePasse = document.getElementById('mdp').value
     const mdpVerif = document.getElementById('mdpVerif').value
 
     // On vérifie que les deux mots de passe correspondent avant d'envoyer quoi que ce soit
-    if (mdp !== mdpVerif) {
+    if (motDePasse !== mdpVerif) {
         afficherErreur('Les mots de passe ne correspondent pas.')
         return // on arrête l'exécution ici
     }
@@ -28,7 +28,7 @@ document.getElementById('formInscription').addEventListener('submit', async (e) 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             // On convertit l'objet JS en JSON pour l'envoyer
-            body: JSON.stringify({ pseudo, email, mdp })
+            body: JSON.stringify({ pseudo, email, motDePasse })
         })
 
         // On convertit la réponse HTTP en objet JS

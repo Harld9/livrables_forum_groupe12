@@ -8,6 +8,9 @@ VALUES
     ('Kabine', 'root', 'Kabinette@gmail.com'),
     ('MOLP', 'root', 'MOLP@gmail.com'),
     ('mollll', 'root', 'Mollll@gmail.com');
+    ('Kabine', 'root', 'Kabinette@gmail.com'),
+    ('MOLP', 'root', 'MOLP@gmail.com'),
+    ('mollll', 'root', 'Mollll@gmail.com');
 
 -- Insertions de topics fictifs dans la table Topic
 
