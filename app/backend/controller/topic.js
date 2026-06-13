@@ -44,13 +44,20 @@ exports.creerTopic = async (req, res) => {
         // On prépare la requête d'insertion
         // On utilise des ? pour éviter les injections SQL
         const sql = `
-            INSERT INTO topic (titre, contenu, idUtilisateur, dateDeCreation)
+            INSERT INTO topic (titre, contenu, idUtilisateur, dateDeCreation )
             VALUES (?, ?, ?, CURDATE())
+        `
+
+        const sqlAppartenir = `
+            INSERT INTO appartenir (idTopic, idTag)
+            VALUES (?, ?)
         `
 
         // On envoie la requête à la base de données avec les valeurs dans le bon ordre
         const [resultat] = await db.query(sql, [titre, contenu, idUtilisateur])
 
+        // On envoie la requête à la base de données avec les valeurs dans le bon ordre
+        const [resultatAppatenir] = await db.query(sqlAppartenir, [resultat.insertId, tags])
 
         // On confirme que l'inscription s'est bien passée avec un code 201 (créé) et on retourne l'id du topic
         res.status(201).json({ message: 'Publication du topic réussie !', id: resultat.insertId })

@@ -118,13 +118,18 @@ async function publier() {
     const contenuTitre = titre.value
     const contenuTopic = contenu.value
     const jeton = sessionStorage.getItem('token')
+    let idTag = 0
+    if (document.querySelector('input[name="idTag"]:checked')) {
+        idTag = document.querySelector('input[name="idTag"]:checked').value
+    }
+
     try {
         // On envoie les données à l'API en POST au format JSON
         const reponse = await fetch('/api/creerTopic', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jeton },
             // On convertit l'objet JS en JSON pour l'envoyer
-            body: JSON.stringify({ titre: contenuTitre, contenu: contenuTopic })
+            body: JSON.stringify({ titre: contenuTitre, contenu: contenuTopic, tags: idTag })
         })
 
         const donnees = await reponse.json()

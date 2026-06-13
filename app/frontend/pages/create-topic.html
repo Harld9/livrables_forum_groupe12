@@ -1,11 +1,7 @@
 <!doctype html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Créer un topic - Le Lounge</title>
-    <link rel="stylesheet" href="/css/style.css" />
-  </head>
 
+<<<<<<< Updated upstream
   <body>
     <header class="site-header">
       <div class="header-inner">
@@ -16,128 +12,122 @@
             style="height: 60px; width: auto"
           />
         </a>
+=======
+<head>
+  <meta charset="UTF-8" />
+  <title>Créer un topic - Le Lounge</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
 
-        <nav class="main-nav">
-          <a href="/" class="nav-link">Accueil</a>
-          <a href="/topics" class="nav-link">Topics</a>
-          <a href="/help" class="nav-link">Aide</a>
-          <a href="/connexion" class="nav-link nav-cta" id="boutonconnexion"
-            >Se connecter / S'inscrire</a
-          >
-        </nav>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <img src="/assets/lounge-banner.png" alt="Le Lounge" style="height: 60px; width: auto" />
       </div>
-    </header>
 
-    <!-- MAIN -->
-    <main class="site-main">
-      <div class="container container-sm">
-        <section class="hero">
-          <h1 class="hero-title">
-            Créer un <span class="hero-accent">Topic</span>
-          </h1>
-          <p class="hero-sub">Partage ton idée avec la communauté du Lounge.</p>
-        </section>
+      <nav class="main-nav">
+        <a href="/" class="nav-link">Accueil</a>
+        <a href="/topics" class="nav-link">Topics</a>
+        <a href="/help" class="nav-link">Aide</a>
+        <a href="/connexion" class="nav-link nav-cta" id="boutonconnexion">Se connecter / S'inscrire</a>
+      </nav>
+    </div>
+  </header>
 
-        <form class="topic-form">
-          <!-- TITLE -->
-          <div class="form-group">
-            <label>Titre du topic <span class="required">*</span></label>
-            <input
-              type="text"
-              placeholder="Ex : Vous pensez quoi de cette série/film ?"
-              id="titreTopic"
-            />
-            <span class="form-hint"
-              >Sois clair et précis pour attirer des réponses.</span
-            >
-          </div>
+  <!-- MAIN -->
+  <main class="site-main">
+    <div class="container container-sm">
+      <section class="hero">
+        <h1 class="hero-title">
+          Créer un <span class="hero-accent">Topic</span>
+        </h1>
+        <p class="hero-sub">Partage ton idée avec la communauté du Lounge.</p>
+      </section>
 
-          <!-- CONTENT -->
-          <div class="form-group">
-            <label>Contenu <span class="required">*</span></label>
-            <textarea
-              rows="8"
-              placeholder="Décris ton sujet..."
-              id="contenuTopic"
-            ></textarea>
-            <span class="form-hint"
-              >Décris ton sujet en détail pour encourager les discussions.</span
-            >
-          </div>
+      <form class="topic-form">
+        <!-- TITLE -->
+        <div class="form-group">
+          <label>Titre du topic <span class="required">*</span></label>
+          <input type="text" placeholder="Ex : Vous pensez quoi de cette série/film ?" id="titreTopic" />
+          <span class="form-hint">Sois clair et précis pour attirer des réponses.</span>
+        </div>
+>>>>>>> Stashed changes
 
-          <!-- TAGS -->
-          <div class="form-group">
-            <label>Tags</label>
+        <!-- CONTENT -->
+        <div class="form-group">
+          <label>Contenu <span class="required">*</span></label>
+          <textarea rows="8" placeholder="Décris ton sujet..." id="contenuTopic"></textarea>
+          <span class="form-hint">Décris ton sujet en détail pour encourager les discussions.</span>
+        </div>
 
-            <div class="tags-grid">
-              <label class="tag-checkbox">
-                <input type="checkbox" />
-                <span class="tag">Série</span>
-              </label>
+        <!-- TAGS -->
+        <div class="form-group">
+          <label>Tags</label>
 
-              <label class="tag-checkbox">
-                <input type="checkbox" />
-                <span class="tag">Film</span>
-              </label>
+          <label class="tag-checkbox">
+            <input type="radio" name="idTag" value="1" />
+            <span class="tag">Série</span>
+          </label>
 
-              <label class="tag-checkbox">
-                <input type="checkbox" />
-                <span class="tag">Review</span>
-              </label>
+          <label class="tag-checkbox">
+            <input type="radio" name="idTag" value="2" />
+            <span class="tag">Film</span>
+          </label>
 
-              <label class="tag-checkbox">
-                <input type="checkbox" />
-                <span class="tag">Discussion</span>
-              </label>
-            </div>
-          </div>
+          <label class="tag-checkbox">
+            <input type="radio" name="idTag" value="3" />
+            <span class="tag">Review</span>
+          </label>
 
-          <div class="form-group">
-            <label>Image du topic</label>
+          <label class="tag-checkbox">
+            <input type="radio" name="idTag" value="4" />
+            <span class="tag">Débat</span>
+          </label>
 
-            <label class="btn btn-primary btn-full" for="imageUpload">
-              📷 Ajouter une image à mon topic
-            </label>
+        </div>
+    </div>
 
-            <input
-              id="imageUpload"
-              type="file"
-              class="file-input"
-              accept="image/*"
-            />
+    <div class="form-group">
+      <label>Image du topic</label>
 
-            <span class="form-hint">
-              PNG, JPG ou WEBP uniquement. Taille recommandée : 1200x800.
-            </span>
+      <label class="btn btn-primary btn-full" for="imageUpload">
+        📷 Ajouter une image à mon topic
+      </label>
 
-            <div class="reply-notice" style="margin-top: 16px">
-              Aperçu image :
-              <div style="margin-top: 10px">
-                <em style="color: var(--gray-400)"
-                  >Aucune image sélectionnée</em
-                >
-              </div>
-            </div>
-          </div>
+      <input id="imageUpload" type="file" class="file-input" accept="image/*" />
 
-          <!-- ACTIONS -->
-          <div class="form-actions">
-            <a href="/topics" class="btn btn-ghost">Annuler</a>
-            <button type="button" class="btn btn-primary" id="boutonPublier">
-              Publier le topic
-            </button>
-          </div>
-        </form>
+      <span class="form-hint">
+        PNG, JPG ou WEBP uniquement. Taille recommandée : 1200x800.
+      </span>
+
+      <div class="reply-notice" style="margin-top: 16px">
+        Aperçu image :
+        <div style="margin-top: 10px">
+          <em style="color: var(--gray-400)">Aucune image sélectionnée</em>
+        </div>
       </div>
-    </main>
+    </div>
 
-    <footer class="site-footer">
-      <div class="footer-inner">
-        <div class="footer-logo">Le Lounge</div>
-        <div>© 2026 Forum Ynov</div>
-      </div>
-    </footer>
-    <script src="/script/main.js"></script>
-    <script src="/script/topic.js"></script>
-  </body>
+    <!-- ACTIONS -->
+    <div class="form-actions">
+      <a href="/topics" class="btn btn-ghost">Annuler</a>
+      <button type="button" class="btn btn-primary" id="boutonPublier">
+        Publier le topic
+      </button>
+    </div>
+    </form>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">Le Lounge</div>
+      <div>© 2026 Forum Ynov</div>
+    </div>
+  </footer>
+  <script src="/script/main.js"></script>
+  <script src="/script/topic.js"></script>
+</body>
+
 </html>

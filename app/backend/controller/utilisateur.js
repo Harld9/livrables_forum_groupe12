@@ -46,6 +46,8 @@ exports.inscrireClient = async (req, res) => {
         //.digest verrouille le calcul en le convertissant en hexadécimal
         const motDePasseHache = crypto.createHash('sha512').update(motDePasse).digest('hex')
 
+
+
         // On prépare la requête d'insertion
         // On utilise des ? pour éviter les injections SQL
         const sql = `
@@ -54,7 +56,7 @@ exports.inscrireClient = async (req, res) => {
         `
 
         // On envoie la requête à la base de données avec les valeurs dans le bon ordre
-        await db.query(sql, [pseudo, email, motDePasseHache])
+        await db.query(sql, [pseudo, email, hashmotDePasse])
 
         // On confirme que l'inscription s'est bien passée avec un code 201 (créé)
         res.status(201).json({ message: 'Inscription réussie !' })
