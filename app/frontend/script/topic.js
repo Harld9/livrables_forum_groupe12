@@ -23,6 +23,18 @@ if (inputRecherche) {
 }
 
 
+const token = sessionStorage.getItem('token');
+
+
+const formulaireReponse = document.getElementById('new-reply-form');
+
+
+if (!token) {
+    
+    if (formulaireReponse) {
+        formulaireReponse.style.display = 'none';
+    }
+}
 async function afficherTopic() {
 
     if (isNaN(idUrl)) {
