@@ -17,4 +17,10 @@ router.post('/creerMessage', auth.verifierToken, topic.creerMessage)
 
 router.get('/rechercheTopic', topic.rechercheTopics)
 
+// On branche DELETE /api/supprimerMessage → Supprimer un message
+router.delete('/supprimerMessage/:idMessage', auth.verifierToken, topic.supprimerMessage)
+
+// On branche DELETE /api/supprimerMessage → Supprimer un message
+router.delete('/supprimerTopic/:idTopic', auth.verifierToken, topic.supprimerTopic)
+
 module.exports = router

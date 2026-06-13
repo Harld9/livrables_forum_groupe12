@@ -1,18 +1,6 @@
 <!doctype html>
 <html lang="fr">
 
-<<<<<<< Updated upstream
-  <body>
-    <header class="site-header">
-      <div class="header-inner">
-        <a href="/" class="logo">
-          <img
-            src="/assets/lounge-banner.png"
-            alt="Le Lounge"
-            style="height: 60px; width: auto"
-          />
-        </a>
-=======
 <head>
   <meta charset="UTF-8" />
   <title>Créer un topic - Le Lounge</title>
@@ -52,7 +40,6 @@
           <input type="text" placeholder="Ex : Vous pensez quoi de cette série/film ?" id="titreTopic" />
           <span class="form-hint">Sois clair et précis pour attirer des réponses.</span>
         </div>
->>>>>>> Stashed changes
 
         <!-- CONTENT -->
         <div class="form-group">
@@ -63,61 +50,49 @@
 
         <!-- TAGS -->
         <div class="form-group">
-          <label>Tags</label>
+          <label>TAGS</label>
 
-          <label class="tag-checkbox">
-            <input type="radio" name="idTag" value="1" />
-            <span class="tag">Série</span>
-          </label>
+          <div class="tags-container">
+            <label class="tag-checkbox">
+              <input type="radio" name="idTag" value="1">
+              <span class="tag">SÉRIE</span>
+            </label>
+            <label class="tag-checkbox">
+              <input type="radio" name="idTag" value="2" />
+              <span class="tag">Film</span>
+            </label>
+            <label class="tag-checkbox">
+              <input type="radio" name="idTag" value="3" />
+              <span class="tag">Review</span>
+            </label>
+            <label class="tag-checkbox">
+              <input type="radio" name="idTag" value="4" />
+              <span class="tag">Débat</span>
+            </label>
+            <label class="tag-checkbox">
+            </label>
 
-          <label class="tag-checkbox">
-            <input type="radio" name="idTag" value="2" />
-            <span class="tag">Film</span>
-          </label>
-
-          <label class="tag-checkbox">
-            <input type="radio" name="idTag" value="3" />
-            <span class="tag">Review</span>
-          </label>
-
-          <label class="tag-checkbox">
-            <input type="radio" name="idTag" value="4" />
-            <span class="tag">Débat</span>
-          </label>
-
+          </div>
         </div>
+
+
+
+
+
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-primary" id="boutonPublier">
+            Publier le topic
+          </button>
+        </div>
+      </form>
+    </div>
+    </div>
     </div>
 
-    <div class="form-group">
-      <label>Image du topic</label>
-
-      <label class="btn btn-primary btn-full" for="imageUpload">
-        📷 Ajouter une image à mon topic
-      </label>
-
-      <input id="imageUpload" type="file" class="file-input" accept="image/*" />
-
-      <span class="form-hint">
-        PNG, JPG ou WEBP uniquement. Taille recommandée : 1200x800.
-      </span>
-
-      <div class="reply-notice" style="margin-top: 16px">
-        Aperçu image :
-        <div style="margin-top: 10px">
-          <em style="color: var(--gray-400)">Aucune image sélectionnée</em>
-        </div>
-      </div>
-    </div>
 
     <!-- ACTIONS -->
-    <div class="form-actions">
-      <a href="/topics" class="btn btn-ghost">Annuler</a>
-      <button type="button" class="btn btn-primary" id="boutonPublier">
-        Publier le topic
-      </button>
-    </div>
-    </form>
-    </div>
+
   </main>
 
   <footer class="site-footer">

@@ -81,7 +81,9 @@ exports.afficherTopic = async (req, res) => {
         // On prépare la requête d'insertion
         // On utilise des ? pour éviter les injections SQL
         const sql1 = `
-             SELECT dateDeCreation, titre, contenu,etat , idUtilisateur FROM topic WHERE idTopic = ?
+             SELECT topic.dateDeCreation, topic.titre, topic.contenu,topic.etat , topic.idUtilisateur,pseudo FROM topic 
+             INNER JOIN utilisateur ON topic.idUtilisateur = utilisateur.idUtilisateur 
+             WHERE topic.idTopic = ?
         `
 
         const sql2 = `
@@ -190,3 +192,53 @@ exports.tri = async (req, res) => {
 
 }
 
+
+exports.supprimerMessage = async (req, res) => {
+    const idMessage = req.params.idMessage;
+    const idUtilisateurConnecte = req.auth.id;
+
+    try {
+        const [resultat] = await db.query('SELECT idUtilisateur FROM Message WHERE idMessage = ?', [idMessage]);
+
+        if (resultat.length === 0) {
+            return res.status(404).json({ message: 'Message introuvable.' });
+        }
+
+        if (resultat[0].idUtilisateur !== idUtilisateurConnecte) {
+            return res.status(403).json({ message: 'Action non autorisée : vous n\'êtes pas le propriétaire de ce message.' });
+        }
+        await db.query('DELETE FROM Message WHERE idMessage = ?', [idMessage]);
+        res.status(200).json({ message: 'Message supprimé avec succès.' });
+
+    } catch (erreur) {
+        console.error(erreur)
+        res.status(500).json({
+            message: "Erreur lors de la recherche."
+        })
+    }
+}
+
+exports.supprimerTopic = async (req, res) => {
+    const idTopic = req.params.idTopic;
+    const idUtilisateurConnecte = req.auth.id;
+
+    try {
+        const [resultat] = await db.query('SELECT idUtilisateur FROM topic WHERE idTopic = ?', [idTopic]);
+
+        if (resultat.length === 0) {
+            return res.status(404).json({ message: 'Topic introuvable.' });
+        }
+
+        if (resultat[0].idUtilisateur !== idUtilisateurConnecte) {
+            return res.status(403).json({ message: 'Action non autorisée : vous n\'êtes pas le propriétaire de ce topîc.' });
+        }
+        await db.query('DELETE FROM topic WHERE idTopic = ?', [idTopic]);
+        res.status(200).json({ message: 'Topic supprimé avec succès.' });
+
+    } catch (erreur) {
+        console.error(erreur)
+        res.status(500).json({
+            message: "Erreur lors de la recherche."
+        })
+    }
+}

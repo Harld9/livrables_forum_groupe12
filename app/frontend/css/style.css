@@ -79,16 +79,12 @@ body::before {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(
-      ellipse 60% 40% at 50% 0%,
+    radial-gradient(ellipse 60% 40% at 50% 0%,
       rgba(229, 9, 20, 0.07) 0%,
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse 80% 60% at 100% 100%,
+      transparent 70%),
+    radial-gradient(ellipse 80% 60% at 100% 100%,
       rgba(229, 9, 20, 0.04) 0%,
-      transparent 60%
-    );
+      transparent 60%);
   pointer-events: none;
   z-index: 0;
 }
@@ -109,6 +105,47 @@ a {
   transition: color var(--transition);
 }
 
+
+/* Le conteneur principal du message */
+.comment-card {
+  background-color: var(--card);
+  /* Utilise la couleur sombre de tes autres cartes */
+  border-radius: 12px;
+  /* Coins arrondis */
+  padding: 16px;
+  /* Espace à l'intérieur pour laisser respirer le texte */
+  margin-bottom: 16px;
+  /* Espace entre chaque message */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  /* Petite bordure très discrète */
+}
+
+/* Le texte du message */
+.comment-body {
+  margin-bottom: 12px;
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* Les infos de l'auteur */
+.comment-meta {
+  font-size: 13px;
+  color: var(--text-dim);
+  /* Utilise ta variable pour rendre le texte plus gris/discret */
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  /* Ligne de séparation */
+  padding-top: 8px;
+}
+
+.tags-container {
+  display: flex;
+  gap: 12px;
+  /* L'espace entre chaque bouton */
+  flex-wrap: wrap;
+  /* Sécurité : permet aux tags de passer à la ligne suivante si l'écran du téléphone est trop petit */
+}
+
 /* ─────────────────────────────────────────────
    HEADER
 ──────────────────────────────────────────── */
@@ -121,11 +158,9 @@ a {
   height: var(--header-h);
   z-index: 1000;
 
-  background: linear-gradient(
-    to bottom,
-    rgba(20, 20, 20, 0.98) 0%,
-    rgba(20, 20, 20, 0.85) 100%
-  );
+  background: linear-gradient(to bottom,
+      rgba(20, 20, 20, 0.98) 0%,
+      rgba(20, 20, 20, 0.85) 100%);
   backdrop-filter: blur(20px) saturate(1.4);
   -webkit-backdrop-filter: blur(20px) saturate(1.4);
 
@@ -741,7 +776,7 @@ a {
   display: none;
 }
 
-.tag-checkbox input:checked + .tag {
+.tag-checkbox input:checked+.tag {
   background: var(--primary);
   border-color: var(--primary);
   color: #fff;

@@ -45,10 +45,47 @@ async function afficherTopic() {
             const contenuTopic = document.getElementById('topic-body')
             titreTopic.textContent = donnees.topic.titre
             contenuTopic.textContent = donnees.topic.contenu
+
+            const actionsFooter = document.querySelector('.topic-actions');
+
+            if (sessionStorage.getItem('pseudo') === donnees.topic.pseudo) {
+                const boutonSupprimerTopic = document.createElement('button');
+                boutonSupprimerTopic.textContent = 'Supprimer le topic';
+                boutonSupprimerTopic.className = 'btn btn-ghost btn-danger';
+
+                boutonSupprimerTopic.onclick = () => supprimerTopic(idUrl);
+
+                if (actionsFooter) {
+                    actionsFooter.appendChild(boutonSupprimerTopic);
+                }
+            }
+
             listeCommentaire = document.getElementById('comments-list')
-            donnees.messages.forEach(reponse => {
+
+            donnees.messages.forEach(msg => {
+
                 const divMessage = document.createElement("div")
-                divMessage.textContent = reponse.contenu + " - " + reponse.pseudo
+                divMessage.className = "comment-card"
+
+
+                divMessage.innerHTML = `
+        <div class="comment-body">${msg.contenu}</div>
+        <div class="comment-meta">Par <strong>${msg.pseudo}</strong></div>
+    `
+
+
+                const pseudoConnecte = sessionStorage.getItem('pseudo')
+                if (pseudoConnecte === msg.pseudo) {
+                    const boutonSupprimer = document.createElement("button")
+                    boutonSupprimer.textContent = "Supprimer"
+                    boutonSupprimer.className = "btn btn-ghost btn-danger"
+
+
+                    boutonSupprimer.onclick = () => supprimerMessage(msg.idMessage)
+
+                    divMessage.appendChild(boutonSupprimer)
+                }
+
                 listeCommentaire.appendChild(divMessage)
             });
 
@@ -177,8 +214,14 @@ function formaterDate(dateString) {
 }
 
 function creerCarteTopic(topic, index) {
-    const topicCard = document.createElement('div')
+    const topicCard = document.createElement('a')
     topicCard.className = 'topic-card'
+
+    topicCard.href = '/topicTemplate?idTopic=' + (topic.idTopic || topic.id)
+
+    topicCard.style.textDecoration = 'none'
+    topicCard.style.color = 'inherit'
+    topicCard.style.display = 'flex'
 
     const numero = document.createElement('div')
     numero.className = 'topic-card-num'
@@ -201,18 +244,13 @@ function creerCarteTopic(topic, index) {
     meta.appendChild(badge)
     meta.appendChild(tag)
 
-    const titleBlock = document.createElement('div')
-    titleBlock.className = 'topic-card-title'
-
-    const titleLink = document.createElement('a')
-    titleLink.href = '/topicTemplate?idTopic=' + topic.idTopic
-    titleLink.textContent = topic.titre || 'Topic sans titre'
-
-    titleBlock.appendChild(titleLink)
-
     const info = document.createElement('div')
     info.className = 'topic-card-info'
     info.innerHTML = `${topic.pseudo || 'Anonyme'} <span class="sep">•</span> ${formaterDate(topic.dateDeCreation)}`
+
+    const titleBlock = document.createElement('div')
+    titleBlock.className = 'topic-card-title'
+    titleBlock.textContent = topic.titre || 'Topic sans titre'
 
     cardBody.appendChild(meta)
     cardBody.appendChild(titleBlock)
@@ -225,6 +263,9 @@ function creerCarteTopic(topic, index) {
     topicCard.appendChild(numero)
     topicCard.appendChild(cardBody)
     topicCard.appendChild(arrow)
+
+
+
 
     return topicCard
 }
@@ -332,3 +373,54 @@ async function rechercherTopic(e) {
 
 
 async function triTopic() { }
+
+async function supprimerMessage(idMessage) {
+    if (!confirm("Voulez-vous vraiment supprimer ce message ?")) {
+        return;
+    }
+
+    try {
+        const reponse = await fetch(`/api/supprimerMessage/${idMessage}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+
+                'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+            }
+        });
+
+        const donnees = await reponse.json();
+
+        if (reponse.ok) {
+            window.location.reload();
+        } else {
+            alert("Erreur : " + donnees.message);
+        }
+    } catch (erreur) {
+        console.error("Erreur lors de la suppression :", erreur);
+        alert("Une erreur réseau est survenue.");
+    }
+}
+
+async function supprimerTopic(idTopic) {
+    if (!confirm("Voulez-vous vraiment supprimer TOUT ce topic et ses messages ?")) return;
+
+    try {
+        const reponse = await fetch(`/api/supprimerTopic/${idTopic}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+            }
+        });
+
+        if (reponse.ok) {
+            window.location.href = '/topics';
+        } else {
+            const donnees = await reponse.json();
+            alert("Erreur : " + donnees.message);
+        }
+    } catch (erreur) {
+        console.error("Erreur :", erreur);
+    }
+}
