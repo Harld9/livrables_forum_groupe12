@@ -8,6 +8,8 @@ const crypto = require('crypto')
 // ===== Inscription =====
 exports.inscrireClient = async (req, res) => {
 
+    const pepper = process.env.PEPPER
+
     // On récupère les données envoyées par le formulaire d'inscription
     // Les noms correspondent aux id des inputs dans inscription.html
     const pseudo = req.body.pseudo
@@ -41,12 +43,14 @@ exports.inscrireClient = async (req, res) => {
             return res.status(409).json({ message: 'Cet email est déjà utilisé.' })
         }
 
+        const sel = crypto.randomBytes(16).toString('hex');
+
         // On hache le mot de passe avant de le stocker
-        //createHash créé une instance de hachage, .update injecte le mot de passe
         //.digest verrouille le calcul en le convertissant en hexadécimal
-        const motDePasseHache = crypto.createHash('sha512').update(motDePasse).digest('hex')
+        const hash = crypto.createHmac('sha512', sel).update(motDePasse + pepper).digest('hex')
 
 
+        const motDePasseHache = sel + ':' + hash;
 
         // On prépare la requête d'insertion
         // On utilise des ? pour éviter les injections SQL
@@ -56,7 +60,7 @@ exports.inscrireClient = async (req, res) => {
         `
 
         // On envoie la requête à la base de données avec les valeurs dans le bon ordre
-        await db.query(sql, [pseudo, email, hashmotDePasse])
+        await db.query(sql, [pseudo, email, motDePasseHache])
 
         // On confirme que l'inscription s'est bien passée avec un code 201 (créé)
         res.status(201).json({ message: 'Inscription réussie !' })
@@ -73,6 +77,7 @@ exports.inscrireClient = async (req, res) => {
 exports.connecterClient = async (req, res) => {
     const motDePasse = req.body.mdp
     const identifiant = req.body.identifiant
+    const pepper = process.env.PEPPER
 
     if (!identifiant || !motDePasse) {
         return res.status(400).json({ message: 'Email et mot de passe requis.' })
@@ -89,9 +94,11 @@ exports.connecterClient = async (req, res) => {
         }
 
         const utilisateur = resultat[0]
-        const motDePasseHache = crypto.createHash('sha512').update(motDePasse).digest('hex')
+        const sel = utilisateur.motDePasse.split(':')[0]
+        const motDePasseHache = utilisateur.motDePasse.split(':')[1]
+        const motDePasseRehache = crypto.createHmac('sha512', sel).update(motDePasse + pepper).digest('hex')
 
-        if (utilisateur.motDePasse !== motDePasseHache) {
+        if (motDePasseHache !== motDePasseRehache) {
             return res.status(401).json({ message: 'Identifiants invalides.' })
         }
 
