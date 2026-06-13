@@ -7,6 +7,21 @@ const params = new URLSearchParams(url);
 //récupère l'id contenu dans l'url et transforme l'id en int via parseint
 const idUrl = parseInt(params.get("idTopic"));
 
+const boutonRecherche = document.getElementById('btn-rechercher')
+const inputRecherche = document.getElementById('search-input')
+const topicsList = document.getElementById('topics-list')
+const formulaireRecherche = inputRecherche ? inputRecherche.closest('form') : null
+
+if (formulaireRecherche) {
+    formulaireRecherche.addEventListener('submit', rechercherTopic)
+} else if (boutonRecherche) {
+    boutonRecherche.addEventListener('click', rechercherTopic)
+}
+
+if (inputRecherche) {
+    inputRecherche.addEventListener('input', rechercherTopic)
+}
+
 
 async function afficherTopic() {
 
@@ -210,7 +225,6 @@ function creerCarteTopic(topic, index) {
 }
 
 async function afficherTopics() {
-    const topicsList = document.getElementById('topics-list')
     if (!topicsList) {
         return
     }
@@ -257,3 +271,59 @@ if (document.getElementById('topic-title')) {
     }
 }
 
+
+async function rechercherTopic(e) {
+    if (e) {
+        e.preventDefault()
+    }
+
+    if (!inputRecherche || !topicsList) {
+        return
+    }
+
+    const recherche = inputRecherche.value.trim()
+    console.log("Recherche :", recherche)
+
+    if (!recherche) {
+        afficherTopics()
+        return
+    }
+
+    try {
+        const reponse = await fetch(
+            `/api/rechercheTopic?recherche=${encodeURIComponent(recherche)}`,
+            {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            }
+        )
+
+
+        const topics = await reponse.json()
+
+
+        topicsList.innerHTML = ''
+
+        if (!reponse.ok) {
+            afficherErreur(topics.message || 'Erreur lors de la recherche.')
+            return
+        }
+
+        if (topics.length === 0) {
+            topicsList.innerHTML =
+                '<p class="empty-state">Aucun résultat trouvé.</p>'
+            return
+        }
+
+        topics.forEach((topic, index) => {
+            topicsList.appendChild(creerCarteTopic(topic, index))
+        })
+
+    } catch (erreur) {
+        console.error(erreur)
+        afficherErreur('Erreur lors de la recherche.')
+    }
+}
+
+
+async function triTopic() { }

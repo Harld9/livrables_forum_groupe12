@@ -15,4 +15,6 @@ router.get('/afficherTopic/:idTopic', topic.afficherTopic)
 // On branche post /api/creerMessage → Creer un message
 router.post('/creerMessage', auth.verifierToken, topic.creerMessage)
 
+router.get('/rechercheTopic', topic.rechercheTopics)
+
 module.exports = router

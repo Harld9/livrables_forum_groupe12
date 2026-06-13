@@ -136,3 +136,50 @@ exports.creerMessage = async (req, res) => {
         res.status(500).json({ message: "Erreur lors de la publication du message." })
     }
 }
+
+exports.rechercheTopics = async (req, res) => {
+    const recherche = req.query.recherche
+
+    if (!recherche) {
+        return res.status(400).json({
+            message: "Veuillez saisir un terme de recherche."
+        })
+    }
+
+    try {
+        const rechercheMinuscule = recherche.toLowerCase()
+
+        const sql = `
+            SELECT t.idTopic, t.titre, t.contenu, t.dateDeCreation, t.etat, u.pseudo
+            FROM topic t
+            LEFT JOIN Utilisateur u ON t.idUtilisateur = u.idUtilisateur
+            WHERE LOWER(t.titre) LIKE ? OR LOWER(t.contenu) LIKE ?
+            ORDER BY t.dateDeCreation DESC
+        `
+
+        const [resultat] = await db.query(sql, [
+            `%${rechercheMinuscule}%`,
+            `%${rechercheMinuscule}%`
+        ])
+
+        res.status(200).json(resultat)
+
+    } catch (erreur) {
+        console.error(erreur)
+        res.status(500).json({
+            message: "Erreur lors de la recherche."
+        })
+    }
+}
+
+
+exports.tri = async (req, res) => {
+
+
+
+
+
+
+
+}
+
