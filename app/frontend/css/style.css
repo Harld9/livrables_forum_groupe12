@@ -331,6 +331,26 @@ a {
   align-items: center;
 }
 
+#boutonconnexion:disabled {
+  background-color: #444;
+  /* Un gris sombre */
+  color: #aaa;
+  /* Un texte gris clair */
+  border: 1px solid #333;
+  opacity: 0.8;
+  /* Un peu transparent */
+  cursor: not-allowed;
+  /* Affiche un petit panneau "sens interdit" au survol */
+}
+
+#boutonconnexion.desactive {
+  /* Ajoute cette classe au besoin */
+  pointer-events: none;
+  /* Ça empêche le clic, le survol, tout ! */
+  cursor: default;
+  background-color: #141414;
+}
+
 /* ─────────────────────────────────────────────
    PAGE TITLE
 ──────────────────────────────────────────── */
