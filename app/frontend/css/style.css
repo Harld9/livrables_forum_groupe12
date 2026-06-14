@@ -378,11 +378,83 @@ a {
    SEARCH + FILTERS
 ──────────────────────────────────────────── */
 
+/* ===== NETTOYAGE ET ALIGNEMENT DE LA BARRE DE FILTRES ===== */
 .filters-bar {
-  margin-bottom: 36px;
   display: flex;
-  flex-direction: column;
-  gap: 14px;
+  justify-content: space-between;
+  /* Recherche à gauche, tags/tri à droite */
+  align-items: center;
+  /* Aligné verticalement */
+  background-color: var(--bg-overlay, #2a2a2a);
+  /* Fond sombre épuré */
+  border-radius: var(--radius-lg, 12px);
+  /* Bords arrondis */
+  padding: 15px 20px;
+  gap: 20px;
+  border: 1px solid var(--border, #333);
+  margin-bottom: 20px;
+}
+
+/* Alignement des éléments à l'intérieur (recherche, tags, tri) */
+.search-form {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+  /* Prend l'espace disponible à gauche */
+  max-width: 400px;
+}
+
+.tags-filter-container,
+.tag-filter {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  /* Revient à la ligne si trop de tags */
+}
+
+.tag-filter-label {
+  color: var(--text-dim, #888);
+  font-size: 0.9em;
+  font-weight: 600;
+}
+
+/* ===== STYLISATION DES BOUTONS DE TAG (Pour qu'ils ressemblent aux badges) ===== */
+.tag.btn {
+  background-color: transparent;
+  /* Fond transparent par défaut */
+  border: 1px solid var(--border, #444);
+  /* Bordure discrète */
+  color: var(--text-dim, #888);
+  padding: 6px 15px;
+  border-radius: 20px;
+  /* Bords arrondis pour le badge */
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Style au survol et sélectionné (Tous) */
+.tag.btn:hover,
+.tag.btn.tag-active {
+  background-color: rgba(255, 255, 255, 0.1);
+  /* Léger fond clair */
+  border-color: #fff;
+  /* Bordure blanche au survol */
+  color: #fff;
+  /* Texte blanc au survol */
+}
+
+/* Style discret pour le menu de tri */
+.tri-container {
+  margin: 0 !important;
+  /* On annule les marges forcées */
+}
+
+#tri-topics.btn-ghost {
+  color: var(--text-dim, #888);
+  border: 1px solid var(--border, #444);
+  padding: 6px 12px;
 }
 
 .search-form {
@@ -448,6 +520,7 @@ a {
   cursor: pointer;
   transition: all var(--transition);
   white-space: nowrap;
+  text-transform: capitalize;
 }
 
 .tag:hover {

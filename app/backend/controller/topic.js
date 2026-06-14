@@ -2,41 +2,31 @@
 const db = require('../database/connexiondb.js')
 
 exports.listerTopics = async (req, res) => {
-
     const tri = req.query.tri;
     const tag = req.query.tag;
 
     try {
-
+        // Toutes les tables ont été passées en minuscules : topic, utilisateur, evaluer, tag, appartenir
         let sql = `
             SELECT t.idTopic, t.titre, t.contenu, t.dateDeCreation, t.etat, u.pseudo,
-                   IFNULL(SUM(e.vote), 0) AS score
+                   (SELECT IFNULL(SUM(vote), 0) FROM evaluer WHERE idTopic = t.idTopic) AS score,
+                   (SELECT tg.nom FROM tag tg JOIN appartenir a2 ON tg.idTag = a2.idTag WHERE a2.idTopic = t.idTopic LIMIT 1) AS nomTag
             FROM topic t
-            LEFT JOIN Utilisateur u ON t.idUtilisateur = u.idUtilisateur
-            LEFT JOIN Evaluer e ON t.idTopic = e.idTopic
+            LEFT JOIN utilisateur u ON t.idUtilisateur = u.idUtilisateur
         `;
 
-
         const parametres = [];
-
 
         if (tag) {
             sql += ` JOIN appartenir a ON t.idTopic = a.idTopic WHERE a.idTag = ? `;
             parametres.push(tag);
         }
 
-
-        sql += ` GROUP BY t.idTopic `;
-
-
         if (tri === 'likes') {
-
             sql += ` ORDER BY score DESC, t.dateDeCreation DESC `;
         } else {
-
             sql += ` ORDER BY t.dateDeCreation DESC `;
         }
-
 
         const [resultat] = await db.query(sql, parametres);
         return res.status(200).json(resultat);
@@ -105,10 +95,13 @@ exports.afficherTopic = async (req, res) => {
     const idTopic = req.params.idTopic;
 
     try {
+        // Correction de la casse ici aussi pour la page du topic seul
         const sqlTopic = `
-            SELECT t.*, u.pseudo 
-            FROM Topic t 
-            JOIN Utilisateur u ON t.idUtilisateur = u.idUtilisateur 
+            SELECT t.*, u.pseudo,
+                   (SELECT IFNULL(SUM(vote), 0) FROM evaluer WHERE idTopic = t.idTopic) AS score,
+                   (SELECT tg.nom FROM tag tg JOIN appartenir a2 ON tg.idTag = a2.idTag WHERE a2.idTopic = t.idTopic LIMIT 1) AS nomTag
+            FROM topic t 
+            JOIN utilisateur u ON t.idUtilisateur = u.idUtilisateur 
             WHERE t.idTopic = ?
         `;
         const [lignesTopic] = await db.query(sqlTopic, [idTopic]);
@@ -119,22 +112,14 @@ exports.afficherTopic = async (req, res) => {
 
         const topicTrouve = lignesTopic[0];
 
-        // 2. On calcule le score total des likes
-        const sqlScore = "SELECT SUM(vote) AS scoreTotal FROM Evaluer WHERE idTopic = ?";
-        const [resultatScore] = await db.query(sqlScore, [idTopic]);
-
-        topicTrouve.score = resultatScore[0].scoreTotal || 0;
-
         const ordreTri = req.query.tri === 'asc' ? 'ASC' : 'DESC';
-
-        // On injecte cet ordre dans la requête SQL des messages
         const sqlMessages = `
-    SELECT m.*, u.pseudo 
-    FROM Message m 
-    JOIN Utilisateur u ON m.idUtilisateur = u.idUtilisateur 
-    WHERE m.idTopic = ?
-    ORDER BY m.dateDeCreation ${ordreTri}
-`;
+            SELECT m.*, u.pseudo 
+            FROM message m 
+            JOIN utilisateur u ON m.idUtilisateur = u.idUtilisateur 
+            WHERE m.idTopic = ?
+            ORDER BY m.dateDeCreation ${ordreTri}
+        `;
         const [messages] = await db.query(sqlMessages, [idTopic]);
 
         res.status(200).json({
@@ -216,17 +201,6 @@ exports.rechercheTopics = async (req, res) => {
             message: "Erreur lors de la recherche."
         })
     }
-}
-
-
-exports.tri = async (req, res) => {
-
-
-
-
-
-
-
 }
 
 

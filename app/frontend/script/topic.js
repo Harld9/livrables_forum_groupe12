@@ -208,9 +208,10 @@ function creerCarteTopic(topic, index) {
     badge.className = 'badge badge-open'
     badge.textContent = 'Ouvert'
 
+    // On crée la balise, on lui donne son design, PUIS on met le texte dynamique
     const tag = document.createElement('span')
     tag.className = 'tag tag-sm'
-    tag.textContent = 'Forum'
+    tag.textContent = topic.nomTag || 'Général'
 
     meta.appendChild(badge)
     meta.appendChild(tag)
@@ -239,6 +240,119 @@ function creerCarteTopic(topic, index) {
 
 
     return topicCard
+}
+
+async function afficherTopic() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tri = urlParams.get('tri') || 'desc';
+
+    if (isNaN(idUrl)) {
+        window.location.href = '/topics';
+        return;
+    }
+
+    try {
+        const reponse = await fetch(`/api/afficherTopic/${idUrl}?tri=${tri}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        const donnees = await reponse.json();
+
+        if (reponse.ok) {
+            const titreTopic = document.getElementById('topic-title');
+            const contenuTopic = document.getElementById('topic-body');
+
+            if (titreTopic) titreTopic.textContent = donnees.topic.titre;
+            if (contenuTopic) contenuTopic.textContent = donnees.topic.contenu;
+
+            // Injection du badge dynamique du tag dans la page du topic
+            const metaTagsDiv = document.getElementById('topic-meta-tags');
+            if (metaTagsDiv) {
+                // On retire les anciens badges dynamiques s'il y en a pour éviter les doublons
+                const ancienTag = metaTagsDiv.querySelector('.tag-dynamique');
+                if (ancienTag) ancienTag.remove();
+
+                const tagSpan = document.createElement('span');
+                tagSpan.className = 'tag tag-sm tag-dynamique';
+                tagSpan.textContent = donnees.topic.nomTag || 'Général';
+                metaTagsDiv.appendChild(tagSpan);
+            }
+
+            const infoDiv = document.getElementById('topic-info');
+            if (infoDiv) {
+                const dateObj = new Date(donnees.topic.dateDeCreation);
+                const dateLisible = dateObj.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+                const heureLisible = dateObj.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
+                infoDiv.innerHTML = `Par <strong>${donnees.topic.pseudo || 'Anonyme'}</strong> <span class="sep">•</span> le ${dateLisible} à ${heureLisible}`;
+            }
+
+            // Affichage du score
+            const affichageScore = document.getElementById('topic-score');
+            if (affichageScore) affichageScore.textContent = donnees.topic.score;
+
+            // --- NOUVEAU : Affichage du tag dans la page du topic ---
+            // Assure-toi d'avoir un <span id="topic-tag"> dans ton topicTemplate.html
+            const affichageTag = document.getElementById('topic-tag');
+            if (affichageTag) {
+                affichageTag.textContent = donnees.topic.nomTag || 'Général';
+            }
+
+            // Gestion de la suppression du topic
+            const actionsFooter = document.querySelector('.topic-actions');
+            if (sessionStorage.getItem('pseudo') === donnees.topic.pseudo) {
+                const boutonSupprimerTopic = document.createElement('button');
+                boutonSupprimerTopic.textContent = 'Supprimer le topic';
+                boutonSupprimerTopic.className = 'btn btn-ghost btn-danger';
+                boutonSupprimerTopic.onclick = () => supprimerTopic(idUrl);
+
+                if (actionsFooter) {
+                    actionsFooter.appendChild(boutonSupprimerTopic);
+                }
+            }
+
+            // Affichage des commentaires
+            const listeCommentaire = document.getElementById('comments-list');
+            if (listeCommentaire) {
+                listeCommentaire.innerHTML = ''; // On vide avant de remplir
+                donnees.messages.forEach(msg => {
+                    const divMessage = document.createElement("div");
+                    divMessage.className = "comment-card";
+
+                    const dateObj = new Date(msg.dateDeCreation);
+                    const dateLisible = dateObj.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+                    const heureLisible = dateObj.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
+
+                    divMessage.innerHTML = `
+                        <div class="comment-body">${msg.contenu}</div>
+                        <div class="comment-meta" style="display: flex; align-items: center; gap: 8px;">
+                            Par <strong>${msg.pseudo}</strong> 
+                            <span style="color: var(--text-dim, #888); font-size: 0.9em;">• le ${dateLisible} à ${heureLisible}</span>
+                        </div>
+                    `;
+
+                    const pseudoConnecte = sessionStorage.getItem('pseudo');
+                    if (pseudoConnecte === msg.pseudo) {
+                        const boutonSupprimer = document.createElement("button");
+                        boutonSupprimer.textContent = "Supprimer";
+                        boutonSupprimer.className = "btn btn-ghost btn-danger";
+                        boutonSupprimer.onclick = () => supprimerMessage(msg.idMessage);
+                        divMessage.appendChild(boutonSupprimer);
+                    }
+
+                    listeCommentaire.appendChild(divMessage);
+                });
+            }
+
+        } else {
+            afficherErreur(donnees.message);
+            window.location.href = '/topics';
+        }
+
+    } catch (erreur) {
+        console.error('Erreur de connexion :', erreur);
+        afficherErreur('Erreur réseau, veuillez réessayer.');
+    }
 }
 
 async function afficherTopics() {
@@ -458,3 +572,16 @@ document.addEventListener('DOMContentLoaded', () => {
         selectTriTopics.value = new URLSearchParams(window.location.search).get('tri') || 'desc';
     }
 });
+
+function filtrerParTag(idTag) {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    if (idTag) {
+        urlParams.set('tag', idTag);
+    } else {
+        urlParams.delete('tag');
+    }
+
+    // On recharge la page avec les nouveaux paramètres
+    window.location.search = urlParams.toString();
+}

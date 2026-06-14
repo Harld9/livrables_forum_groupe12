@@ -25,65 +25,95 @@
 
   <main class="site-main">
     <div class="container container-sm">
-      <h1 class="page-title">Topic</h1>
 
-      <article id="topic-container" class="auth-card" style="padding: 20px; margin-bottom: 20px">
-        <header class="topic-header">
-          <div id="topic-meta" class="topic-card-meta" style="margin-bottom: 12px"></div>
+      <a href="/topics" class="btn btn-ghost" style="display: inline-block; margin-bottom: 20px;">← Retour aux
+        topics</a>
 
-          <h2 id="topic-title" class="topic-card-title" style="margin: 0 0 12px; font-size: 1.6rem">
-            Titre du topic
-          </h2>
+      <article id="topic-container"
+        style="background-color: var(--bg-overlay, #1e1e24); border: 1px solid var(--border, #333); border-radius: 12px; padding: 30px; margin-bottom: 30px;">
 
-          <div id="topic-info" class="topic-card-info" style="margin-bottom: 14px"></div>
+        <header class="topic-header"
+          style="border-bottom: 1px solid var(--border, #333); padding-bottom: 15px; margin-bottom: 20px;">
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <div id="topic-meta-tags" style="display: flex; gap: 10px; align-items: center;">
+              <span class="badge badge-open">Ouvert</span>
+            </div>
+            <div id="topic-info" style="color: var(--text-dim, #888); font-size: 0.9em;">
+            </div>
+          </div>
+
+          <h1 id="topic-title" style="margin: 0; font-size: 2rem; color: #fff;">
+            Chargement du titre...
+          </h1>
         </header>
 
-        <section id="topic-body" class="topic-content"
-          style="color: var(--muted); line-height: 1.6; margin-bottom: 18px"></section>
-        <div class="topic-likes" style="display: flex; gap: 10px; align-items: center; margin: 15px 0;">
-          <button id="btn-like" class="btn btn-primary" onclick="envoyerVote(1)">👍 Like</button>
+        <section id="topic-body" style="color: #ccc; line-height: 1.8; font-size: 1.1rem; margin-bottom: 30px;">
+          Chargement du contenu...
+        </section>
 
-          <strong id="topic-score" style="font-size: 1.2rem;">0</strong>
+        <footer
+          style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
 
-          <button id="btn-dislike" class="btn btn-ghost" onclick="envoyerVote(-1)">👎 Dislike</button>
-        </div>
-        <footer class="topic-actions" style="display: flex; gap: 12px; align-items: center">
-          <a href="/create-topic" class="btn btn-primary">Répondre</a>
-          <button id="topic-report" class="btn btn-ghost">Signaler</button>
+          <div class="topic-likes" style="display: flex; gap: 15px; align-items: center;">
+            <button id="btn-like" class="btn btn-primary" onclick="envoyerVote(1)" style="padding: 8px 15px;">👍
+              Like</button>
+            <strong id="topic-score"
+              style="font-size: 1.4rem; color: #fff; min-width: 30px; text-align: center;">0</strong>
+            <button id="btn-dislike" class="btn btn-ghost" onclick="envoyerVote(-1)" style="padding: 8px 15px;">👎
+              Dislike</button>
+          </div>
+
+          <div class="topic-actions" style="display: flex; gap: 10px;">
+            <button id="topic-report" class="btn btn-ghost"
+              style="color: #ff4d4d; border-color: #ff4d4d;">Signaler</button>
+          </div>
+
         </footer>
       </article>
 
-      <div style="text-align: right; margin-bottom: 15px;">
-        <select id="tri-messages" class="btn btn-ghost" onchange="changerTri(this.value)">
-          <option value="desc">Plus récents en premier</option>
-          <option value="asc">Plus anciens en premier</option>
-        </select>
-      </div>
-
       <section id="comments-section">
-        <h3 style="margin: 0 0 12px">Réponses</h3>
 
-        <div id="comments-list" class="topics-list"></div>
+        <div
+          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border, #333);">
+          <h3 style="margin: 0; font-size: 1.4rem;">Réponses</h3>
+          <select id="tri-messages" class="btn btn-ghost"
+            style="border: 1px solid #444; padding: 6px 12px; background: transparent; color: #fff; cursor: pointer;"
+            onchange="changerTri(this.value)">
+            <option value="desc" style="color: #000;">Plus récents en premier</option>
+            <option value="asc" style="color: #000;">Plus anciens en premier</option>
+          </select>
+        </div>
 
-        <form id="new-reply-form" class="search-form" style="margin-top: 18px">
-          <textarea id="reply-text" rows="4" placeholder="Écrire une réponse..." style="
-                flex: 1;
+        <div id="comments-list" style="display: flex; flex-direction: column; gap: 15px;">
+        </div>
+
+        <form id="new-reply-form"
+          style="margin-top: 30px; background-color: var(--bg-overlay, #1e1e24); border: 1px solid var(--border, #333); border-radius: 12px; padding: 20px;">
+          <h4 style="margin: 0 0 15px 0;">Ajouter une réponse</h4>
+          <textarea id="reply-text" rows="4" placeholder="Écrire une réponse polie et constructive..." style="
+                width: 100%;
                 resize: vertical;
-                padding: 12px;
-                border-radius: 12px;
-                border: 1px solid rgba(255, 255, 255, 0.06);
-                background: transparent;
-                color: var(--text);
+                padding: 15px;
+                border-radius: 8px;
+                border: 1px solid var(--border, #444);
+                background: rgba(0,0,0,0.2);
+                color: var(--text, #fff);
+                margin-bottom: 15px;
+                font-family: inherit;
               "></textarea>
-          <div style="display: flex; gap: 8px; margin-top: 8px">
+
+          <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button type="button" id="reply-cancel" class="btn btn-ghost"
+              onclick="document.getElementById('reply-text').value=''">
+              Annuler
+            </button>
             <button type="submit" class="btn btn-primary" id="boutonPublier">
               Publier la réponse
             </button>
-            <button type="button" id="reply-cancel" class="btn btn-ghost">
-              Annuler
-            </button>
           </div>
         </form>
+
       </section>
     </div>
   </main>

@@ -10,9 +10,9 @@
 <body>
   <header class="site-header">
     <div class="header-inner">
-      <div class="logo">
+      <a href="/" class="logo">
         <img src="/assets/lounge-banner.png" alt="Le Lounge" style="height: 60px; width: auto" />
-      </div>
+      </a>
 
       <nav class="main-nav">
         <a href="/" class="nav-link">Accueil</a>
@@ -23,7 +23,6 @@
     </div>
   </header>
 
-  <!-- MAIN -->
   <main class="site-main">
     <div class="container container-sm">
       <section class="hero">
@@ -34,70 +33,54 @@
       </section>
 
       <form class="topic-form">
-        <!-- TITLE -->
         <div class="form-group">
           <label>Titre du topic <span class="required">*</span></label>
           <input type="text" placeholder="Ex : Vous pensez quoi de cette série/film ?" id="titreTopic" />
           <span class="form-hint">Sois clair et précis pour attirer des réponses.</span>
         </div>
 
-        <!-- CONTENT -->
         <div class="form-group">
           <label>Contenu <span class="required">*</span></label>
           <textarea rows="8" placeholder="Décris ton sujet..." id="contenuTopic"></textarea>
           <span class="form-hint">Décris ton sujet en détail pour encourager les discussions.</span>
         </div>
 
-        <!-- TAGS -->
         <div class="form-group">
-          <label>TAGS</label>
-
-          <div class="tags-container">
-            <label class="tag-checkbox">
-              <input type="radio" name="idTag" value="1">
-              <span class="tag">SÉRIE</span>
-            </label>
-            <label class="tag-checkbox">
-              <input type="radio" name="idTag" value="2" />
+          <label>Tags <span class="required">*</span></label>
+          <div class="tags-container" style="display: flex; gap: 15px; margin-top: 10px;">
+            <label class="tag-checkbox" style="cursor: pointer;">
+              <input type="radio" name="idTag" value="1" checked>
               <span class="tag">Film</span>
             </label>
-            <label class="tag-checkbox">
-              <input type="radio" name="idTag" value="3" />
-              <span class="tag">Review</span>
+            <label class="tag-checkbox" style="cursor: pointer;">
+              <input type="radio" name="idTag" value="2">
+              <span class="tag">Série</span>
             </label>
-            <label class="tag-checkbox">
-              <input type="radio" name="idTag" value="4" />
-              <span class="tag">Débat</span>
+            <label class="tag-checkbox" style="cursor: pointer;">
+              <input type="radio" name="idTag" value="3">
+              <span class="tag">Anime</span>
             </label>
-            <label class="tag-checkbox">
+            <label class="tag-checkbox" style="cursor: pointer;">
+              <input type="radio" name="idTag" value="4">
+              <span class="tag">Question</span>
             </label>
-
           </div>
         </div>
 
-
-
-
-
-
-        <div class="form-actions">
+        <div class="form-actions" style="margin-top: 30px;">
           <button type="button" class="btn btn-primary" id="boutonPublier">
             Publier le topic
           </button>
         </div>
       </form>
     </div>
-    </div>
-    </div>
-
-
-    <!-- ACTIONS -->
-
   </main>
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <div class="footer-logo">Le Lounge</div>
+      <div class="logo">
+        <img src="/assets/lounge-transparent.png" alt="Le Lounge" style="height: 60px; width: auto" />
+      </div>
       <div>© 2026 Forum Ynov</div>
     </div>
   </footer>

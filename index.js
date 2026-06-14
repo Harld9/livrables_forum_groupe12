@@ -79,5 +79,5 @@ app.use('/api', topicRouter)
 // Démarrer le serveur
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on port http://localhost:${PORT}`);
+  console.log(`Serveur lancé sur : http://localhost:${PORT}`);
 });

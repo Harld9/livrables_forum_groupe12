@@ -38,5 +38,5 @@ INSERT INTO
 VALUES
     ("film"),
     ("série"),
-    ("débat"),
-    ("question")
+    ("anime"),
+   

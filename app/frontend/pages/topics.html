@@ -26,26 +26,45 @@
   <main class="site-main">
     <div class="container">
       <h1 class="page-title">Tous les topics</h1>
-      <div class="tri-container" style="margin-bottom: 20px; text-align: right;">
-        <select id="tri-topics" class="btn btn-ghost" onchange="changerTriTopics(this.value)">
-          <option value="desc">Plus récents en premier</option>
-          <option value="likes">Les plus populaires (Likes)</option>
-        </select>
-      </div>
-      <div class="filters-bar">
-        <form class="search-form">
-          <input class="search-input" id="search-input" type="text" placeholder="Rechercher un topic..." />
+
+      <div
+        style="display: flex; justify-content: space-between; align-items: center; background-color: var(--bg-overlay, #1e1e24); padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border, #333);">
+
+        <form class="search-form" style="margin: 0; display: flex; gap: 10px; width: 40%;">
+          <input class="search-input" id="search-input" type="text" placeholder="Rechercher un topic..."
+            style="width: 100%;" />
           <button class="btn btn-primary" id="btn-rechercher">Rechercher</button>
         </form>
 
-        <div class="tag-filter">
-          <span class="tag tag-active">Tous</span>
-          <span class="tag">Séries</span>
-          <span class="tag">Films</span>
-          <span class="tag">Animes</span>
+        <div style="display: flex; gap: 20px; align-items: center;">
+
+          <div style="display: flex; gap: 8px;">
+            <button class="btn tag"
+              style="border: 1px solid #444; border-radius: 20px; padding: 5px 12px; background: transparent; color: #fff; cursor: pointer;"
+              onclick="filtrerParTag('')">Tous</button>
+            <button class="btn tag"
+              style="border: 1px solid #444; border-radius: 20px; padding: 5px 12px; background: transparent; color: #fff; cursor: pointer;"
+              onclick="filtrerParTag('1')">Film</button>
+            <button class="btn tag"
+              style="border: 1px solid #444; border-radius: 20px; padding: 5px 12px; background: transparent; color: #fff; cursor: pointer;"
+              onclick="filtrerParTag('2')">Série</button>
+            <button class="btn tag"
+              style="border: 1px solid #444; border-radius: 20px; padding: 5px 12px; background: transparent; color: #fff; cursor: pointer;"
+              onclick="filtrerParTag('3')">Anime</button>
+            <button class="btn tag"
+              style="border: 1px solid #444; border-radius: 20px; padding: 5px 12px; background: transparent; color: #fff; cursor: pointer;"
+              onclick="filtrerParTag('4')">Question</button>
+          </div>
+
+          <select id="tri-topics" class="btn btn-ghost"
+            style="border: 1px solid #444; padding: 6px 12px; background: transparent; color: #fff; cursor: pointer;"
+            onchange="changerTriTopics(this.value)">
+            <option value="desc" style="color: #000;">Récents</option>
+            <option value="likes" style="color: #000;">Populaires</option>
+          </select>
+
         </div>
       </div>
-
       <section class="topics-list" id="topics-list"></section>
 
       <div class="pagination">
@@ -53,6 +72,7 @@
         <span class="pagination-info">Page 1</span>
         <button class="btn btn-ghost btn-sm">→</button>
       </div>
+
     </div>
   </main>
 
