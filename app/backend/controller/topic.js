@@ -1,21 +1,49 @@
 // On importe la connexion à la base de données
 const db = require('../database/connexiondb.js')
 
-//
 exports.listerTopics = async (req, res) => {
+
+    const tri = req.query.tri;
+    const tag = req.query.tag;
+
     try {
-        const sql = `
-            SELECT t.idTopic, t.titre, t.contenu, t.dateDeCreation, t.etat, u.pseudo
+
+        let sql = `
+            SELECT t.idTopic, t.titre, t.contenu, t.dateDeCreation, t.etat, u.pseudo,
+                   IFNULL(SUM(e.vote), 0) AS score
             FROM topic t
             LEFT JOIN Utilisateur u ON t.idUtilisateur = u.idUtilisateur
-            ORDER BY t.dateDeCreation DESC
-        `
+            LEFT JOIN Evaluer e ON t.idTopic = e.idTopic
+        `;
 
-        const [resultat] = await db.query(sql)
-        return res.status(200).json(resultat)
+
+        const parametres = [];
+
+
+        if (tag) {
+            sql += ` JOIN appartenir a ON t.idTopic = a.idTopic WHERE a.idTag = ? `;
+            parametres.push(tag);
+        }
+
+
+        sql += ` GROUP BY t.idTopic `;
+
+
+        if (tri === 'likes') {
+
+            sql += ` ORDER BY score DESC, t.dateDeCreation DESC `;
+        } else {
+
+            sql += ` ORDER BY t.dateDeCreation DESC `;
+        }
+
+
+        const [resultat] = await db.query(sql, parametres);
+        return res.status(200).json(resultat);
+
     } catch (erreur) {
-        console.error(erreur)
-        return res.status(500).json({ message: 'Erreur lors du chargement des topics.' })
+        console.error(erreur);
+        return res.status(500).json({ message: 'Erreur lors du chargement des topics.' });
     }
 }
 

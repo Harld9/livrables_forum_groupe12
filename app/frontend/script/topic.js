@@ -35,91 +35,42 @@ if (!token) {
         formulaireReponse.style.display = 'none';
     }
 }
-async function afficherTopic() {
-    // 1. On récupère le paramètre de tri dans l'URL
+async function afficherTopics() {
+    if (!topicsList) {
+        return
+    }
+
+    // 1. On lit ce qui se trouve dans l'URL (ex: ?tri=likes)
     const urlParams = new URLSearchParams(window.location.search);
     const tri = urlParams.get('tri') || 'desc';
 
-    if (isNaN(idUrl)) {
-        window.location.href = '/topics';
-        return;
-    }
-
     try {
-        // 2. UN SEUL FETCH qui inclut le paramètre ?tri=
-        const reponse = await fetch(`/api/afficherTopic/${idUrl}?tri=${tri}`, {
+        // 2. On injecte le paramètre de tri à la fin de notre appel !
+        const reponse = await fetch(`/api/topics?tri=${tri}`, {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-        });
+            headers: { 'Content-Type': 'application/json' }
+        })
 
-        const donnees = await reponse.json();
-        console.log(donnees);
+        const topics = await reponse.json()
 
-        if (reponse.ok) {
-            console.log('Réussite d\'affichage de la page');
-
-            const titreTopic = document.getElementById('topic-title');
-            const contenuTopic = document.getElementById('topic-body');
-            titreTopic.textContent = donnees.topic.titre;
-            contenuTopic.textContent = donnees.topic.contenu;
-
-            // Affichage du score
-            const affichageScore = document.getElementById('topic-score');
-            if (affichageScore) {
-                affichageScore.textContent = donnees.topic.score;
-            }
-
-            // Gestion de la suppression du topic
-            const actionsFooter = document.querySelector('.topic-actions');
-            if (sessionStorage.getItem('pseudo') === donnees.topic.pseudo) {
-                const boutonSupprimerTopic = document.createElement('button');
-                boutonSupprimerTopic.textContent = 'Supprimer le topic';
-                boutonSupprimerTopic.className = 'btn btn-ghost btn-danger';
-                boutonSupprimerTopic.onclick = () => supprimerTopic(idUrl);
-
-                if (actionsFooter) {
-                    actionsFooter.appendChild(boutonSupprimerTopic);
-                }
-            }
-
-            // Affichage des commentaires
-            const listeCommentaire = document.getElementById('comments-list');
-
-            donnees.messages.forEach(msg => {
-                const divMessage = document.createElement("div");
-                divMessage.className = "comment-card";
-                const dateObj = new Date(msg.dateDeCreation);
-                const dateLisible = dateObj.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-                const heureLisible = dateObj.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
-
-                divMessage.innerHTML = `
-    <div class="comment-body">${msg.contenu}</div>
-    <div class="comment-meta" style="display: flex; align-items: center; gap: 8px;">
-        Par <strong>${msg.pseudo}</strong> 
-        <span style="color: var(--text-dim, #888); font-size: 0.9em;">• le ${dateLisible} à ${heureLisible}</span>
-    </div>
-`;
-
-                const pseudoConnecte = sessionStorage.getItem('pseudo');
-                if (pseudoConnecte === msg.pseudo) {
-                    const boutonSupprimer = document.createElement("button");
-                    boutonSupprimer.textContent = "Supprimer";
-                    boutonSupprimer.className = "btn btn-ghost btn-danger";
-                    boutonSupprimer.onclick = () => supprimerMessage(msg.idMessage);
-                    divMessage.appendChild(boutonSupprimer);
-                }
-
-                listeCommentaire.appendChild(divMessage);
-            });
-
-        } else {
-            afficherErreur(donnees.message);
-            window.location.href = '/topics';
+        if (!reponse.ok) {
+            afficherErreur(topics.message || 'Impossible de charger les topics.')
+            return
         }
 
+        topicsList.innerHTML = ''
+
+        if (topics.length === 0) {
+            topicsList.innerHTML = '<p class="empty-state">Aucun topic disponible pour le moment.</p>'
+            return
+        }
+
+        topics.forEach((topic, index) => {
+            topicsList.appendChild(creerCarteTopic(topic, index))
+        })
     } catch (erreur) {
-        console.error('Erreur de connexion :', erreur);
-        afficherErreur('Erreur réseau, veuillez réessayer.');
+        console.error('Erreur de chargement des topics :', erreur)
+        topicsList.innerHTML = '<p class="message-erreur">Impossible de charger les topics.</p>'
     }
 }
 
@@ -226,9 +177,11 @@ function formaterDate(dateString) {
         return 'Aujourd\'hui'
     }
 
-    const date = new Date(dateString)
-    const options = { day: 'numeric', month: 'long' }
-    return date.toLocaleDateString('fr-FR', options)
+    const dateObj = new Date(dateString)
+    const dateLisible = dateObj.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+    const heureLisible = dateObj.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }).replace(':', 'h')
+
+    return `${dateLisible} à ${heureLisible}`
 }
 
 function creerCarteTopic(topic, index) {
@@ -264,8 +217,8 @@ function creerCarteTopic(topic, index) {
 
     const info = document.createElement('div')
     info.className = 'topic-card-info'
-    info.innerHTML = `${topic.pseudo || 'Anonyme'} <span class="sep">•</span> ${formaterDate(topic.dateDeCreation)}`
-
+    // On a ajouté "le" devant la date, et on a concaténé le score à la fin avec un petit pouce
+    info.innerHTML = `${topic.pseudo || 'Anonyme'} <span class="sep">•</span> le ${formaterDate(topic.dateDeCreation)} <span class="sep">•</span> <strong style="color: var(--text, #fff);">👍 ${topic.score || 0}</strong>`
     const titleBlock = document.createElement('div')
     titleBlock.className = 'topic-card-title'
     titleBlock.textContent = topic.titre || 'Topic sans titre'
@@ -485,9 +438,23 @@ function changerTri(valeur) {
     window.location.search = urlParams.toString();
 }
 
+
+function changerTriTopics(valeur) {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('tri', valeur);
+    window.location.search = urlParams.toString();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    const selectTri = document.getElementById('tri-messages');
-    if (selectTri) {
-        selectTri.value = new URLSearchParams(window.location.search).get('tri') || 'desc';
+    // Menu des messages
+    const selectTriMessages = document.getElementById('tri-messages');
+    if (selectTriMessages) {
+        selectTriMessages.value = new URLSearchParams(window.location.search).get('tri') || 'desc';
     }
-})
+
+    // Menu des topics
+    const selectTriTopics = document.getElementById('tri-topics');
+    if (selectTriTopics) {
+        selectTriTopics.value = new URLSearchParams(window.location.search).get('tri') || 'desc';
+    }
+});

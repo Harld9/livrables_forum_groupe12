@@ -1,121 +1,110 @@
 <!doctype html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Le Lounge</title>
-    <link rel="stylesheet" href="/css/style.css" />
-  </head>
-  <body>
-    <header class="site-header">
-      <div class="header-inner">
-        <a href="/" class="logo">
-          <img
-            src="/assets/lounge-banner.png"
-            alt="Le Lounge"
-            style="height: 60px; width: auto"
-          />
-        </a>
 
-        <nav class="main-nav">
-          <a href="/" class="nav-link">Accueil</a>
-          <a href="/topics" class="nav-link">Topics</a>
-          <a href="/help" class="nav-link">Aide</a>
-          <a href="/connexion" class="nav-link nav-cta" id="boutonconnexion"
-            >Se connecter / S'inscrire</a
-          >
-        </nav>
-      </div>
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <title>Le Lounge</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
 
-    <!-- MAIN -->
-    <main class="site-main">
-      <div class="container">
-        <section class="hero">
-          <h1 class="hero-title">
-            Bienvenue sur <span class="hero-accent">Le Lounge</span>
-          </h1>
-          <p class="hero-sub">
-            Le lieu où les passionnés de films et séries se retrouvent pour
-            échanger et découvrir ensemble.
-          </p>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="logo">
+        <img src="/assets/lounge-banner.png" alt="Le Lounge" style="height: 60px; width: auto" />
+      </a>
 
-          <div class="hero-actions">
-            <a href="/create-topic"
-              ><button class="btn btn-primary">Créer un topic</button></a
-            >
-            <a href="/topics" class="btn btn-ghost">Explorer</a>
-          </div>
-        </section>
+      <nav class="main-nav">
+        <a href="/" class="nav-link">Accueil</a>
+        <a href="/topics" class="nav-link">Topics</a>
+        <a href="/help" class="nav-link">Aide</a>
+        <a href="/connexion" class="nav-link nav-cta" id="boutonconnexion">Se connecter / S'inscrire</a>
+      </nav>
+    </div>
+  </header>
 
-        <div class="filters-bar">
-          <form class="search-form">
-            <input
-              class="search-input"
-              id="search-input"
-              type="text"
-              placeholder="Rechercher un topic..."
-            />
-            <button class="btn btn-primary" id="btn-rechercher">Rechercher</button>
-          </form>
+  <!-- MAIN -->
+  <main class="site-main">
+    <div class="container">
+      <section class="hero">
+        <h1 class="hero-title">
+          Bienvenue sur <span class="hero-accent">Le Lounge</span>
+        </h1>
+        <p class="hero-sub">
+          Le lieu où les passionnés de films et séries se retrouvent pour
+          échanger et découvrir ensemble.
+        </p>
 
-          <div class="tag-filter">
-            <span class="tag-filter-label">Tags :</span>
-            <span class="tag tag-active">Tous</span>
-            <span class="tag">Dev</span>
-            <span class="tag">Gaming</span>
-            <span class="tag">Général</span>
-          </div>
+        <div class="hero-actions">
+          <a href="/create-topic"><button class="btn btn-primary">Créer un topic</button></a>
+          <a href="/topics" class="btn btn-ghost">Explorer</a>
         </div>
+      </section>
 
-        <section class="topics-list" id="topics-list">
-          <!-- EPINGLE -->
-          <div class="topic-card">
-            <div class="topic-card-num">📌</div>
+      <div class="filters-bar">
+        <form class="search-form">
+          <input class="search-input" id="search-input" type="text" placeholder="Rechercher un topic..." />
+          <button class="btn btn-primary" id="btn-rechercher">Rechercher</button>
+        </form>
 
-            <div class="topic-card-body">
-              <div class="topic-card-meta">
-                <span class="badge badge-admin">Épinglé</span>
-                <span class="tag tag-sm">Guide</span>
-              </div>
+        <div class="tag-filter">
+          <span class="tag-filter-label">Tags :</span>
+          <span class="tag tag-active">Tous</span>
+          <span class="tag">Dev</span>
+          <span class="tag">Gaming</span>
+          <span class="tag">Général</span>
+        </div>
+      </div>
 
-              <div class="topic-card-title">
-                <a href="/guide"
-                  >Guide du forum - Bien commencer sur Le Lounge</a
-                >
-              </div>
+      <section class="topics-list" id="topics-list">
+        <!-- EPINGLE -->
+        <div class="topic-card">
+          <div class="topic-card-num">📌</div>
 
-              <div class="topic-card-info">
-                <span>Administration</span>
-                <span class="sep">•</span>
-                <span>Règles & fonctionnement</span>
-              </div>
+          <div class="topic-card-body">
+            <div class="topic-card-meta">
+              <span class="badge badge-admin">Épinglé</span>
+              <span class="tag tag-sm">Guide</span>
             </div>
 
-            <div class="topic-card-arrow">→</div>
+            <div class="topic-card-title">
+              <a href="/guide">Guide du forum - Bien commencer sur Le Lounge</a>
+            </div>
+
+            <div class="topic-card-info">
+              <span>Administration</span>
+              <span class="sep">•</span>
+              <span>Règles & fonctionnement</span>
+            </div>
           </div>
-        </section>
 
-        <div class="pagination">
-          <button class="btn btn-ghost btn-sm">←</button>
-          <span class="pagination-info">Page 1 / 10</span>
-          <button class="btn btn-ghost btn-sm">→</button>
+          <div class="topic-card-arrow">→</div>
         </div>
+      </section>
+      <div class="tri-container" style="margin-bottom: 20px; text-align: right;">
+        <select id="tri-topics" class="btn btn-ghost" onchange="changerTriTopics(this.value)">
+          <option value="desc">Plus récents en premier</option>
+          <option value="likes">Les plus populaires (Likes)</option>
+        </select>
       </div>
-    </main>
+      <div class="pagination">
+        <button class="btn btn-ghost btn-sm">←</button>
+        <span class="pagination-info">Page 1 / 10</span>
+        <button class="btn btn-ghost btn-sm">→</button>
+      </div>
+    </div>
+  </main>
 
-    <footer class="site-footer">
-      <div class="footer-inner">
-        <div class="logo">
-          <img
-            src="/assets/lounge-transparent.png"
-            alt="Le Lounge"
-            style="height: 60px; width: auto"
-          />
-        </div>
-        <div>© 2026 Forum Ynov</div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="logo">
+        <img src="/assets/lounge-transparent.png" alt="Le Lounge" style="height: 60px; width: auto" />
       </div>
-    </footer>
-    <script src="/script/main.js"></script>
-    <script src="/script/topic.js"></script>
-  </body>
+      <div>© 2026 Forum Ynov</div>
+    </div>
+  </footer>
+  <script src="/script/main.js"></script>
+  <script src="/script/topic.js"></script>
+</body>
+
 </html>

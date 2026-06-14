@@ -26,7 +26,12 @@
   <main class="site-main">
     <div class="container">
       <h1 class="page-title">Tous les topics</h1>
-
+      <div class="tri-container" style="margin-bottom: 20px; text-align: right;">
+        <select id="tri-topics" class="btn btn-ghost" onchange="changerTriTopics(this.value)">
+          <option value="desc">Plus récents en premier</option>
+          <option value="likes">Les plus populaires (Likes)</option>
+        </select>
+      </div>
       <div class="filters-bar">
         <form class="search-form">
           <input class="search-input" id="search-input" type="text" placeholder="Rechercher un topic..." />
