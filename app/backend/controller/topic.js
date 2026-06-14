@@ -74,42 +74,47 @@ exports.creerTopic = async (req, res) => {
 
 
 exports.afficherTopic = async (req, res) => {
-
     const idTopic = req.params.idTopic;
 
     try {
-        // On prépare la requête d'insertion
-        // On utilise des ? pour éviter les injections SQL
-        const sql1 = `
-             SELECT topic.dateDeCreation, topic.titre, topic.contenu,topic.etat , topic.idUtilisateur,pseudo FROM topic 
-             INNER JOIN utilisateur ON topic.idUtilisateur = utilisateur.idUtilisateur 
-             WHERE topic.idTopic = ?
-        `
+        const sqlTopic = `
+            SELECT t.*, u.pseudo 
+            FROM Topic t 
+            JOIN Utilisateur u ON t.idUtilisateur = u.idUtilisateur 
+            WHERE t.idTopic = ?
+        `;
+        const [lignesTopic] = await db.query(sqlTopic, [idTopic]);
 
-        const sql2 = `
-            SELECT message.contenu, message.dateDeCreation, utilisateur.pseudo
-            FROM message
-            INNER JOIN utilisateur ON message.idUtilisateur = utilisateur.idUtilisateur
-            WHERE message.idTopic = ?
-            ORDER BY message.dateDeCreation ASC
-        `
+        if (lignesTopic.length === 0) {
+            return res.status(404).json({ message: "Topic introuvable." });
+        }
 
-        // On envoie la requête à la base de données avec les valeurs dans le bon ordre
-        const [resultatTopic] = await db.query(sql1, [idTopic])
-        const [resultatMessage] = await db.query(sql2, [idTopic])
+        const topicTrouve = lignesTopic[0];
 
-        // On confirme que l'inscription s'est bien passée avec un code 200 et on retourne le topic avec ses messages
-        res.status(200).json({ topic: resultatTopic[0], messages: resultatMessage })
+        // 2. On calcule le score total des likes
+        const sqlScore = "SELECT SUM(vote) AS scoreTotal FROM Evaluer WHERE idTopic = ?";
+        const [resultatScore] = await db.query(sqlScore, [idTopic]);
 
+        topicTrouve.score = resultatScore[0].scoreTotal || 0;
 
+        const sqlMessages = `
+            SELECT m.*, u.pseudo 
+            FROM Message m 
+            JOIN Utilisateur u ON m.idUtilisateur = u.idUtilisateur 
+            WHERE m.idTopic = ?
+        `;
+        const [messages] = await db.query(sqlMessages, [idTopic]);
+
+        res.status(200).json({
+            topic: topicTrouve,
+            messages: messages
+        });
 
     } catch (erreur) {
-        // On affiche l'erreur dans le terminal pour déboguer
-        console.error(erreur)
-        // On informe le client qu'une erreur s'est produite côté serveur
-        res.status(500).json({ message: "Erreur lors de la demande du topic." })
+        console.error("Erreur dans afficherTopic:", erreur);
+        res.status(500).json({ message: "Erreur serveur lors de la récupération du topic." });
     }
-}
+};
 
 exports.creerMessage = async (req, res) => {
 
@@ -242,3 +247,36 @@ exports.supprimerTopic = async (req, res) => {
         })
     }
 }
+
+exports.likerTopic = async (req, res) => {
+    // 1. On récupère les infos
+    const idTopic = req.params.idTopic;
+    const vote = req.body.vote;
+
+    // ATTENTION : selon comment tu as codé ton middleware, c'est soit req.auth.id, soit req.auth.userId
+    const idUtilisateurConnecte = req.auth.userId || req.auth.id;
+
+    // 2. Sécurité : on vérifie que la donnée est bien +1 ou -1
+    if (vote !== 1 && vote !== -1) {
+        return res.status(400).json({ message: "Le vote doit être +1 ou -1." });
+    }
+
+    try {
+        // 3. La requête d'insertion / mise à jour
+        const sql = `
+            INSERT INTO Evaluer (idUtilisateur, idTopic, vote)
+            VALUES (?, ?, ?) 
+            ON DUPLICATE KEY UPDATE vote = ?
+        `;
+
+        await db.query(sql, [idUtilisateurConnecte, idTopic, vote, vote]);
+
+        // 4. On renvoie un succès simple (pas besoin de topicTrouve ici !)
+        res.status(200).json({ message: "Vote enregistré avec succès !" });
+
+    } catch (erreur) {
+        console.error("Erreur lors de l'évaluation :", erreur);
+        res.status(500).json({ message: "Erreur serveur lors de l'enregistrement du vote." });
+    }
+}
+

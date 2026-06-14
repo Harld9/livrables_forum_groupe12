@@ -6,7 +6,7 @@ CREATE TABLE
    Utilisateur (
       idUtilisateur INT AUTO_INCREMENT,
       pseudo VARCHAR(50) UNIQUE,
-      motDePasse VARCHAR(128),
+      motDePasse VARCHAR(255),
       dateDeCreation DATETIME DEFAULT CURRENT_TIMESTAMP,
       email VARCHAR(255) UNIQUE,
       typeCompte VARCHAR(50) DEFAULT "Utilisateur",
@@ -65,7 +65,7 @@ CREATE TABLE Appartenir (
 -- ===== TABLE EVALUER =====
 CREATE TABLE Evaluer (
     idUtilisateur INT,
-    idMessage INT,
+    idTopic INT,
     vote SMALLINT,
     PRIMARY KEY (idUtilisateur, idMessage),
     FOREIGN KEY (idUtilisateur)

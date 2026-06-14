@@ -30,7 +30,7 @@ const formulaireReponse = document.getElementById('new-reply-form');
 
 
 if (!token) {
-    
+
     if (formulaireReponse) {
         formulaireReponse.style.display = 'none';
     }
@@ -57,6 +57,12 @@ async function afficherTopic() {
             const contenuTopic = document.getElementById('topic-body')
             titreTopic.textContent = donnees.topic.titre
             contenuTopic.textContent = donnees.topic.contenu
+
+
+            const affichageScore = document.getElementById('topic-score') // Remplace par l'ID exact de ton "0" dans ton HTML
+            if (affichageScore) {
+                affichageScore.textContent = donnees.topic.score
+            }
 
             const actionsFooter = document.querySelector('.topic-actions');
 
@@ -434,5 +440,41 @@ async function supprimerTopic(idTopic) {
         }
     } catch (erreur) {
         console.error("Erreur :", erreur);
+    }
+}
+
+async function envoyerVote(valeurVote) {
+    const jeton = sessionStorage.getItem('token');
+
+    if (!jeton) {
+        alert("Vous devez être connecté pour évaluer un topic.");
+        return;
+    }
+
+    try {
+
+        const reponse = await fetch(`/api/likerTopic/${idUrl}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + jeton
+            },
+
+            body: JSON.stringify({ vote: valeurVote })
+        });
+
+        const donnees = await reponse.json();
+
+        if (reponse.ok) {
+
+            window.location.reload();
+        } else {
+
+            alert("Erreur : " + donnees.message);
+        }
+
+    } catch (erreur) {
+        console.error("Erreur d'envoi du vote :", erreur);
+        alert("Erreur réseau lors de l'envoi du vote.");
     }
 }

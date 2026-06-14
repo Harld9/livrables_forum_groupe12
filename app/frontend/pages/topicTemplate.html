@@ -40,7 +40,13 @@
 
         <section id="topic-body" class="topic-content"
           style="color: var(--muted); line-height: 1.6; margin-bottom: 18px"></section>
+        <div class="topic-likes" style="display: flex; gap: 10px; align-items: center; margin: 15px 0;">
+          <button id="btn-like" class="btn btn-primary" onclick="envoyerVote(1)">👍 Like</button>
 
+          <strong id="topic-score" style="font-size: 1.2rem;">0</strong>
+
+          <button id="btn-dislike" class="btn btn-ghost" onclick="envoyerVote(-1)">👎 Dislike</button>
+        </div>
         <footer class="topic-actions" style="display: flex; gap: 12px; align-items: center">
           <a href="/create-topic" class="btn btn-primary">Répondre</a>
           <button id="topic-report" class="btn btn-ghost">Signaler</button>

@@ -1047,3 +1047,59 @@ a {
     width: 100%;
   }
 }
+
+/* Le conteneur "pilule" sombre */
+.vote-container {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--bg-overlay, #2a2a2a);
+  border-radius: 20px;
+  padding: 4px 8px;
+  gap: 12px;
+  margin: 15px 0;
+  border: 1px solid var(--border, #333);
+}
+
+/* Le style de base des boutons invisibles */
+.btn-vote {
+  background: transparent;
+  border: none;
+  color: var(--text-dim, #888);
+  cursor: pointer;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+/* Effet au survol */
+.btn-vote:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.btn-like:hover {
+  color: #4ade80;
+  /* Vert au survol */
+}
+
+.btn-dislike:hover {
+  color: #f87171;
+  /* Rouge au survol */
+}
+
+.vote-score {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text, #fff);
+  min-width: 20px;
+  text-align: center;
+}
+
+#topic-title {
+  white-space: normal;
+  overflow: visible;
+  word-wrap: break-word;
+}

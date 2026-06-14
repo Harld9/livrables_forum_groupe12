@@ -20,7 +20,10 @@ router.get('/rechercheTopic', topic.rechercheTopics)
 // On branche DELETE /api/supprimerMessage → Supprimer un message
 router.delete('/supprimerMessage/:idMessage', auth.verifierToken, topic.supprimerMessage)
 
-// On branche DELETE /api/supprimerMessage → Supprimer un message
+// On branche DELETE /api/supprimerTopic → Supprimer un topic
 router.delete('/supprimerTopic/:idTopic', auth.verifierToken, topic.supprimerTopic)
+
+// On branche POST /api/likerTopic → Liker un message
+router.post('/likerTopic/:idTopic', auth.verifierToken, topic.likerTopic)
 
 module.exports = router
