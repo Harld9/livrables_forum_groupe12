@@ -36,41 +36,45 @@ if (!token) {
     }
 }
 async function afficherTopic() {
+    // 1. On récupère le paramètre de tri dans l'URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const tri = urlParams.get('tri') || 'desc';
 
     if (isNaN(idUrl)) {
-        window.location.href = '/topics'
-        return
+        window.location.href = '/topics';
+        return;
     }
 
     try {
-        // On demande les données à l'API en GET au format JSON
-        const reponse = await fetch(`/api/afficherTopic/${idUrl}`, {
+        // 2. UN SEUL FETCH qui inclut le paramètre ?tri=
+        const reponse = await fetch(`/api/afficherTopic/${idUrl}?tri=${tri}`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
-        })
+        });
 
-        const donnees = await reponse.json()
-        console.log(donnees)
+        const donnees = await reponse.json();
+        console.log(donnees);
+
         if (reponse.ok) {
-            console.log('Réussite d\'affichage de la page')
-            const titreTopic = document.getElementById('topic-title')
-            const contenuTopic = document.getElementById('topic-body')
-            titreTopic.textContent = donnees.topic.titre
-            contenuTopic.textContent = donnees.topic.contenu
+            console.log('Réussite d\'affichage de la page');
 
+            const titreTopic = document.getElementById('topic-title');
+            const contenuTopic = document.getElementById('topic-body');
+            titreTopic.textContent = donnees.topic.titre;
+            contenuTopic.textContent = donnees.topic.contenu;
 
-            const affichageScore = document.getElementById('topic-score') // Remplace par l'ID exact de ton "0" dans ton HTML
+            // Affichage du score
+            const affichageScore = document.getElementById('topic-score');
             if (affichageScore) {
-                affichageScore.textContent = donnees.topic.score
+                affichageScore.textContent = donnees.topic.score;
             }
 
+            // Gestion de la suppression du topic
             const actionsFooter = document.querySelector('.topic-actions');
-
             if (sessionStorage.getItem('pseudo') === donnees.topic.pseudo) {
                 const boutonSupprimerTopic = document.createElement('button');
                 boutonSupprimerTopic.textContent = 'Supprimer le topic';
                 boutonSupprimerTopic.className = 'btn btn-ghost btn-danger';
-
                 boutonSupprimerTopic.onclick = () => supprimerTopic(idUrl);
 
                 if (actionsFooter) {
@@ -78,49 +82,45 @@ async function afficherTopic() {
                 }
             }
 
-            listeCommentaire = document.getElementById('comments-list')
+            // Affichage des commentaires
+            const listeCommentaire = document.getElementById('comments-list');
 
             donnees.messages.forEach(msg => {
-
-                const divMessage = document.createElement("div")
-                divMessage.className = "comment-card"
-
+                const divMessage = document.createElement("div");
+                divMessage.className = "comment-card";
+                const dateObj = new Date(msg.dateDeCreation);
+                const dateLisible = dateObj.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+                const heureLisible = dateObj.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }).replace(':', 'h');
 
                 divMessage.innerHTML = `
-        <div class="comment-body">${msg.contenu}</div>
-        <div class="comment-meta">Par <strong>${msg.pseudo}</strong></div>
-    `
+    <div class="comment-body">${msg.contenu}</div>
+    <div class="comment-meta" style="display: flex; align-items: center; gap: 8px;">
+        Par <strong>${msg.pseudo}</strong> 
+        <span style="color: var(--text-dim, #888); font-size: 0.9em;">• le ${dateLisible} à ${heureLisible}</span>
+    </div>
+`;
 
-
-                const pseudoConnecte = sessionStorage.getItem('pseudo')
+                const pseudoConnecte = sessionStorage.getItem('pseudo');
                 if (pseudoConnecte === msg.pseudo) {
-                    const boutonSupprimer = document.createElement("button")
-                    boutonSupprimer.textContent = "Supprimer"
-                    boutonSupprimer.className = "btn btn-ghost btn-danger"
-
-
-                    boutonSupprimer.onclick = () => supprimerMessage(msg.idMessage)
-
-                    divMessage.appendChild(boutonSupprimer)
+                    const boutonSupprimer = document.createElement("button");
+                    boutonSupprimer.textContent = "Supprimer";
+                    boutonSupprimer.className = "btn btn-ghost btn-danger";
+                    boutonSupprimer.onclick = () => supprimerMessage(msg.idMessage);
+                    divMessage.appendChild(boutonSupprimer);
                 }
 
-                listeCommentaire.appendChild(divMessage)
+                listeCommentaire.appendChild(divMessage);
             });
 
         } else {
-            afficherErreur(donnees.message)
-            // On redirige vers la page générale des topics*/
-            window.location.href = '/topics'
+            afficherErreur(donnees.message);
+            window.location.href = '/topics';
         }
 
+    } catch (erreur) {
+        console.error('Erreur de connexion :', erreur);
+        afficherErreur('Erreur réseau, veuillez réessayer.');
     }
-
-    catch (erreur) {
-        // On affiche une erreur générique si le fetch échoue (réseau, serveur down...)
-        console.error('Erreur de connexion :', erreur)
-        afficherErreur('Erreur réseau, veuillez réessayer.')
-    }
-
 }
 
 async function publierMessage(e) {
@@ -478,3 +478,16 @@ async function envoyerVote(valeurVote) {
         alert("Erreur réseau lors de l'envoi du vote.");
     }
 }
+
+function changerTri(valeur) {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('tri', valeur);
+    window.location.search = urlParams.toString();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const selectTri = document.getElementById('tri-messages');
+    if (selectTri) {
+        selectTri.value = new URLSearchParams(window.location.search).get('tri') || 'desc';
+    }
+})

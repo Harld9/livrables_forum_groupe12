@@ -44,8 +44,8 @@ exports.creerTopic = async (req, res) => {
         // On prépare la requête d'insertion
         // On utilise des ? pour éviter les injections SQL
         const sql = `
-            INSERT INTO topic (titre, contenu, idUtilisateur, dateDeCreation )
-            VALUES (?, ?, ?, CURDATE())
+            INSERT INTO topic (titre, contenu, idUtilisateur)
+            VALUES (?, ?, ?)
         `
 
         const sqlAppartenir = `
@@ -97,12 +97,16 @@ exports.afficherTopic = async (req, res) => {
 
         topicTrouve.score = resultatScore[0].scoreTotal || 0;
 
+        const ordreTri = req.query.tri === 'asc' ? 'ASC' : 'DESC';
+
+        // On injecte cet ordre dans la requête SQL des messages
         const sqlMessages = `
-            SELECT m.*, u.pseudo 
-            FROM Message m 
-            JOIN Utilisateur u ON m.idUtilisateur = u.idUtilisateur 
-            WHERE m.idTopic = ?
-        `;
+    SELECT m.*, u.pseudo 
+    FROM Message m 
+    JOIN Utilisateur u ON m.idUtilisateur = u.idUtilisateur 
+    WHERE m.idTopic = ?
+    ORDER BY m.dateDeCreation ${ordreTri}
+`;
         const [messages] = await db.query(sqlMessages, [idTopic]);
 
         res.status(200).json({
@@ -130,8 +134,8 @@ exports.creerMessage = async (req, res) => {
         // On prépare la requête d'insertion
         // On utilise des ? pour éviter les injections SQL
         const sql = `
-            INSERT INTO message (contenu, idUtilisateur, idTopic, dateDeCreation)
-            VALUES (?, ?, ?, CURDATE())
+            INSERT INTO message (contenu, idUtilisateur, idTopic)
+            VALUES (?, ?, ?)
         `
 
         // On envoie la requête à la base de données avec les valeurs dans le bon ordre

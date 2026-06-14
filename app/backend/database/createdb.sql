@@ -67,10 +67,10 @@ CREATE TABLE Evaluer (
     idUtilisateur INT,
     idTopic INT,
     vote SMALLINT,
-    PRIMARY KEY (idUtilisateur, idMessage),
-    FOREIGN KEY (idUtilisateur)
+    PRIMARY KEY (idUtilisateur, idTopic),
+    FOREIGN KEY (idUtilisateur) 
         REFERENCES Utilisateur(idUtilisateur),
-    FOREIGN KEY (idMessage)
-        REFERENCES Message(idMessage)
+    FOREIGN KEY (idTopic) 
+        REFERENCES Topic(idTopic) 
         ON DELETE CASCADE
 );
