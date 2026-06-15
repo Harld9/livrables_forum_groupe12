@@ -1,66 +1,194 @@
 <!doctype html>
 <html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Le Lounge - Topics</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <title>Le Lounge - Topics</title>
-  <link rel="stylesheet" href="/css/style.css" />
-</head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a href="/" class="logo">
+          <img
+            src="/assets/lounge-banner.png"
+            alt="Le Lounge"
+            style="height: 60px; width: auto"
+          />
+        </a>
 
-<body>
-  <header class="site-header">
-    <div class="header-inner">
-      <a href="/" class="logo">
-        <img src="/assets/lounge-banner.png" alt="Le Lounge" style="height: 60px; width: auto" />
-      </a>
+        <nav class="main-nav">
+          <a href="/" class="nav-link">Accueil</a>
+          <a href="/topics" class="nav-link">Topics</a>
+          <a href="/help" class="nav-link">Aide</a>
+          <a href="/connexion" class="nav-link nav-cta" id="boutonconnexion"
+            >Connexion</a
+          >
+        </nav>
+      </div>
+    </header>
 
-      <nav class="main-nav">
-        <a href="/" class="nav-link">Accueil</a>
-        <a href="/topics" class="nav-link">Topics</a>
-        <a href="/help" class="nav-link">Aide</a>
-        <a href="/connexion" class="nav-link nav-cta" id="boutonconnexion">Connexion</a>
-      </nav>
-    </div>
-  </header>
+    <main class="site-main">
+      <div class="container">
+        <h1 class="page-title">Tous les topics</h1>
 
-  <main class="site-main">
-    <div class="container">
-      <h1 class="page-title">Tous les topics</h1>
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-overlay, #1e1e24);
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border, #333);
+          "
+        >
+          <div
+            style="display: flex; gap: 15px; width: 45%; align-items: center"
+          >
+            <form
+              class="search-form"
+              style="margin: 0; display: flex; gap: 10px; flex-grow: 1"
+            >
+              <input
+                class="search-input"
+                id="search-input"
+                type="text"
+                placeholder="Rechercher un topic..."
+                style="width: 100%"
+              />
+              <button class="btn btn-primary" id="btn-rechercher">
+                Rechercher
+              </button>
+            </form>
+            <a
+              href="/create-topic"
+              class="btn btn-ghost"
+              style="
+                border: 1px solid var(--primary);
+                color: var(--primary);
+                white-space: nowrap;
+              "
+              >+ Créer</a
+            >
+          </div>
 
-      <div class="filters-bar">
-        <form class="search-form">
-          <input class="search-input" id="search-input" type="text" placeholder="Rechercher un topic..." />
-          <button class="btn btn-primary" id="btn-rechercher">Rechercher</button>
-        </form>
+          <div style="display: flex; gap: 20px; align-items: center">
+            <div style="display: flex; gap: 8px">
+              <button
+                class="btn tag"
+                style="
+                  border: 1px solid #444;
+                  border-radius: 20px;
+                  padding: 5px 12px;
+                  background: transparent;
+                  color: #fff;
+                  cursor: pointer;
+                "
+                onclick="filtrerParTag('')"
+              >
+                Tous
+              </button>
+              <button
+                class="btn tag"
+                style="
+                  border: 1px solid #444;
+                  border-radius: 20px;
+                  padding: 5px 12px;
+                  background: transparent;
+                  color: #fff;
+                  cursor: pointer;
+                "
+                onclick="filtrerParTag('1')"
+              >
+                Film
+              </button>
+              <button
+                class="btn tag"
+                style="
+                  border: 1px solid #444;
+                  border-radius: 20px;
+                  padding: 5px 12px;
+                  background: transparent;
+                  color: #fff;
+                  cursor: pointer;
+                "
+                onclick="filtrerParTag('2')"
+              >
+                Série
+              </button>
+              <button
+                class="btn tag"
+                style="
+                  border: 1px solid #444;
+                  border-radius: 20px;
+                  padding: 5px 12px;
+                  background: transparent;
+                  color: #fff;
+                  cursor: pointer;
+                "
+                onclick="filtrerParTag('3')"
+              >
+                Anime
+              </button>
+              <button
+                class="btn tag"
+                style="
+                  border: 1px solid #444;
+                  border-radius: 20px;
+                  padding: 5px 12px;
+                  background: transparent;
+                  color: #fff;
+                  cursor: pointer;
+                "
+                onclick="filtrerParTag('4')"
+              >
+                Question
+              </button>
+            </div>
 
-        <div class="tag-filter">
-          <span class="tag tag-active">Tous</span>
-          <span class="tag">Séries</span>
-          <span class="tag">Films</span>
-          <span class="tag">Animes</span>
+            <select
+              id="tri-topics"
+              class="btn btn-ghost"
+              style="
+                border: 1px solid #444;
+                padding: 6px 12px;
+                background: transparent;
+                color: #fff;
+                cursor: pointer;
+              "
+              onchange="changerTriTopics(this.value)"
+            >
+              <option value="desc" style="color: #000">Récents</option>
+              <option value="likes" style="color: #000">Populaires</option>
+            </select>
+          </div>
+        </div>
+
+        <section class="topics-list" id="topics-list"></section>
+
+        <div class="pagination">
+          <button class="btn btn-ghost btn-sm">←</button>
+          <span class="pagination-info">Page 1</span>
+          <button class="btn btn-ghost btn-sm">→</button>
         </div>
       </div>
+    </main>
 
-      <section class="topics-list" id="topics-list"></section>
-
-      <div class="pagination">
-        <button class="btn btn-ghost btn-sm">←</button>
-        <span class="pagination-info">Page 1</span>
-        <button class="btn btn-ghost btn-sm">→</button>
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="logo">
+          <img
+            src="/assets/lounge-transparent.png"
+            alt="Le Lounge"
+            style="height: 60px; width: auto"
+          />
+        </div>
+        <div>© 2026 Forum Ynov</div>
       </div>
-    </div>
-  </main>
-
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <div class="logo">
-        <img src="/assets/lounge-transparent.png" alt="Le Lounge" style="height: 60px; width: auto" />
-      </div>
-      <div>© 2026 Forum Ynov</div>
-    </div>
-  </footer>
-  <script src="/script/main.js"></script>
-  <script src="/script/topic.js"></script>
-</body>
-
+    </footer>
+    <script src="/script/main.js"></script>
+    <script src="/script/topic.js"></script>
+  </body>
 </html>
