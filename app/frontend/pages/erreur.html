@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Erreur interne - Le Lounge</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body
+    style="
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #121214;
+      color: #fff;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+    "
+  >
+    <div
+      style="
+        background-color: var(--bg-overlay, #1e1e24);
+        padding: 50px;
+        border-radius: 12px;
+        border: 1px solid var(--border, #333);
+        max-width: 500px;
+        width: 100%;
+      "
+    >
+      <h1
+        style="
+          font-size: 3.5rem;
+          margin: 0 0 10px 0;
+          color: var(--primary, #ff4d4d);
+        "
+      >
+        Oups !
+      </h1>
+      <h2 style="font-size: 1.5rem; margin: 0 0 15px 0; color: #eee">
+        Une erreur inattendue est survenue.
+      </h2>
+
+      <p
+        style="
+          font-size: 1rem;
+          color: #aaa;
+          line-height: 1.6;
+          margin-bottom: 30px;
+        "
+      >
+        Nos serveurs ont rencontré un petit problème technique ou un lien a été
+        rompu. Pas de panique, nos équipes sont probablement déjà sur le coup !
+      </p>
+
+      <div style="display: flex; gap: 15px; justify-content: center">
+        <button
+          onclick="window.history.back()"
+          class="btn btn-ghost"
+          style="
+            padding: 10px 20px;
+            border: 1px solid #444;
+            color: #fff;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+          "
+        >
+          ← Retour
+        </button>
+
+        <a
+          href="/"
+          class="btn btn-primary"
+          style="
+            text-decoration: none;
+            padding: 10px 20px;
+            background: #ff4d4d;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 1rem;
+            border: none;
+          "
+        >
+          Aller à l'accueil
+        </a>
+      </div>
+    </div>
+  </body>
+</html>
