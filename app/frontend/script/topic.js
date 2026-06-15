@@ -55,7 +55,7 @@ async function afficherTopic() {
 
             const actionsFooter = document.querySelector('.topic-actions');
 
-            if (sessionStorage.getItem('pseudo') === donnees.topic.pseudo) {
+            if (sessionStorage.getItem('pseudo') === donnees.topic.pseudo || sessionStorage.getItem('typeCompte') === 'admin') {
                 const boutonSupprimerTopic = document.createElement('button');
                 boutonSupprimerTopic.textContent = 'Supprimer le topic';
                 boutonSupprimerTopic.className = 'btn btn-ghost btn-danger';
@@ -76,7 +76,7 @@ async function afficherTopic() {
                 `;
 
                 const pseudoConnecte = sessionStorage.getItem('pseudo');
-                if (pseudoConnecte === msg.pseudo) {
+                if (pseudoConnecte === msg.pseudo || sessionStorage.getItem('typeCompte') === 'admin') {
                     const boutonSupprimer = document.createElement("button");
                     boutonSupprimer.textContent = "Supprimer";
                     boutonSupprimer.className = "btn btn-ghost btn-danger";

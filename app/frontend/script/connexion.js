@@ -18,6 +18,7 @@ formulaire.addEventListener('submit', async (event) => {
         if (reponse.ok) {
             sessionStorage.setItem('token', donnees.token)
             sessionStorage.setItem('pseudo', donnees.pseudo)
+            sessionStorage.setItem('typeCompte', donnees.typeCompte);
             window.location.href = '/'
         } else {
             afficherErreur(donnees.message)

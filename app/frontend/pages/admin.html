@@ -4,17 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Administration - Le Lounge</title>
-    <link rel="stylesheet" href="css/admin.css" />
+    <link rel="stylesheet" href="/css/admin.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
+
+    <script>
+      if (sessionStorage.getItem("typeCompte") !== "admin") {
+        window.location.href = "/";
+      }
+    </script>
   </head>
 
   <body>
-    <!-- HEADER -->
     <header class="site-header">
       <div class="header-inner">
         <div class="header-left">
@@ -30,26 +35,19 @@
 
         <nav class="main-nav">
           <a href="/" class="nav-link">Accueil</a>
-          <a href="/topics" class="nav-link">Topics</a>
           <a href="/help" class="nav-link">Aide</a>
-          <a href="/admin" class="nav-link nav-cta">Admin</a>
         </nav>
       </div>
     </header>
 
-    <!-- MAIN -->
     <main class="site-main">
       <div class="container">
-        <!-- HERO -->
         <section class="hero">
           <div>
             <div class="hero-label">Panneau d'administration</div>
             <h1 class="hero-title">
               Administration du <span class="hero-accent">Lounge</span>
             </h1>
-            <p class="hero-sub">
-              Gestion des utilisateurs, sanctions, archives et annonces.
-            </p>
           </div>
           <div class="hero-stats">
             <div class="stat-chip">
@@ -69,54 +67,18 @@
           </div>
         </section>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; background-color: var(--bg-overlay, #1e1e24); padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border, #333);">
-
-        <form class="search-form" style="margin: 0; display: flex; gap: 10px; width: 40%;">
-          <input class="search-input" id="search-input" type="text" placeholder="Rechercher un topic..." style="width: 100%;" />
-          <button class="btn btn-primary" id="btn-rechercher">Rechercher</button>
-        </form>
-
-        <div style="display: flex; gap: 20px; align-items: center;">
-          <div style="display: flex; gap: 8px;">
-            <button class="btn tag" style="border: 1px solid #444; border-radius: 20px; padding: 5px 12px; background: transparent; color: #fff; cursor: pointer;" onclick="filtrerParTag('')">Tous</button>
-            <button class="btn tag" style="border: 1px solid #444; border-radius: 20px; padding: 5px 12px; background: transparent; color: #fff; cursor: pointer;" onclick="filtrerParTag('1')">Film</button>
-            <button class="btn tag" style="border: 1px solid #444; border-radius: 20px; padding: 5px 12px; background: transparent; color: #fff; cursor: pointer;" onclick="filtrerParTag('2')">Série</button>
-            <button class="btn tag" style="border: 1px solid #444; border-radius: 20px; padding: 5px 12px; background: transparent; color: #fff; cursor: pointer;" onclick="filtrerParTag('3')">Anime</button>
-            <button class="btn tag" style="border: 1px solid #444; border-radius: 20px; padding: 5px 12px; background: transparent; color: #fff; cursor: pointer;" onclick="filtrerParTag('4')">Question</button>
-          </div>
-
-          
-        <!-- ADMIN TABS -->
         <div class="admin-tabs filters-bar">
           <div class="tag-filter">
             <button class="tag tag-active admin-tab" data-tab="users">
-              Gestionnaire
+              Utilisateurs
             </button>
-            <button class="tag admin-tab" data-tab="archives">Archives</button>
-            <button class="tag admin-tab" data-tab="announcement">
-              Annonce
-            </button>
+            <button class="tag admin-tab" data-tab="topics">Topics</button>
+            <button class="tag admin-tab" data-tab="messages">Messages</button>
           </div>
         </div>
 
-        <!-- =========================
-             USERS
-        ========================== -->
         <section class="admin-panel" id="users">
-          <div class="filters-bar">
-            <form class="search-form">
-              <input
-                class="search-input"
-                type="text"
-                placeholder="Rechercher un utilisateur..."
-              />
-              <button class="btn btn-primary btn-sm" type="button">
-                Rechercher
-              </button>
-            </form>
-          </div>
-
-          <h2 class="reply-title">Gestion des utilisateurs</h2>
+          <h2 class="reply-title">Gestion des Utilisateurs</h2>
           <div class="table-wrapper">
             <table class="admin-table">
               <thead>
@@ -128,133 +90,51 @@
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody>
-                <!-- SQL -->
-              </tbody>
-            </table>
-          </div>
-
-          <h2 class="reply-title">Gestion des sanctions</h2>
-          <div class="table-wrapper">
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>Utilisateur</th>
-                  <th>Type</th>
-                  <th>Raison</th>
-                  <th>Durée</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- SQL -->
-              </tbody>
+              <tbody id="admin-users-list"></tbody>
             </table>
           </div>
         </section>
 
-        <!-- =========================
-             ARCHIVES
-        ========================== -->
-        <section class="admin-panel" id="archives" style="display: none">
-          <div class="filters-bar">
-            <form class="search-form">
-              <input
-                class="search-input"
-                type="text"
-                placeholder="Rechercher un topic archivé..."
-              />
-              <button class="btn btn-primary btn-sm" type="button">
-                Rechercher
-              </button>
-            </form>
-          </div>
-
-          <h2 class="reply-title">Topics archivés</h2>
+        <section class="admin-panel" id="topics" style="display: none">
+          <h2 class="reply-title">Gestion des Topics</h2>
           <div class="table-wrapper">
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th>Titre</th>
+                  <th>ID</th>
+                  <th>Titre du Topic</th>
                   <th>Auteur</th>
-                  <th>Date</th>
+                  <th>Date de création</th>
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody>
-                <!-- SQL -->
-              </tbody>
-            </table>
-          </div>
-
-          <div class="filters-bar">
-            <form class="search-form">
-              <input
-                class="search-input"
-                type="text"
-                placeholder="Rechercher un topic supprimé..."
-              />
-              <button class="btn btn-primary btn-sm" type="button">
-                Rechercher
-              </button>
-            </form>
-          </div>
-
-          <h2 class="reply-title">Topics supprimés</h2>
-          <div class="table-wrapper">
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>Titre</th>
-                  <th>Raison</th>
-                  <th>Date suppression</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- SQL -->
-              </tbody>
+              <tbody id="admin-topics-list"></tbody>
             </table>
           </div>
         </section>
 
-        <!-- =========================
-             ANNOUNCEMENT
-        ========================== -->
-        <section class="admin-panel" id="announcement" style="display: none">
-          <h2 class="reply-title">Créer une annonce</h2>
-
-          <form class="topic-form">
-            <div class="form-group">
-              <label>Titre de l'annonce</label>
-              <input type="text" />
-            </div>
-
-            <div class="form-group">
-              <label>Contenu</label>
-              <textarea rows="6"></textarea>
-            </div>
-
-            <div class="form-group">
-              <label>Priorité</label>
-              <select>
-                <option>Normale</option>
-                <option>Importante</option>
-                <option>Urgente</option>
-              </select>
-            </div>
-
-            <div class="form-actions">
-              <button type="button" class="btn btn-ghost">Annuler</button>
-              <button type="button" class="btn btn-primary">Publier</button>
-            </div>
-          </form>
+        <section class="admin-panel" id="messages" style="display: none">
+          <h2 class="reply-title">Modération des Messages</h2>
+          <div class="table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Contenu du message</th>
+                  <th>Auteur</th>
+                  <th>Dans le topic</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-messages-list"></tbody>
+            </table>
+          </div>
         </section>
       </div>
     </main>
 
-    <!-- JS TABS -->
     <script>
+      // 1. Gestion visuelle des onglets (Tabs)
       const tabs = document.querySelectorAll(".admin-tab");
       const panels = document.querySelectorAll(".admin-panel");
 
@@ -262,32 +142,188 @@
         tab.addEventListener("click", () => {
           tabs.forEach((t) => t.classList.remove("tag-active"));
           tab.classList.add("tag-active");
-
           const target = tab.dataset.tab;
-
           panels.forEach((p) => {
             p.style.display = p.id === target ? "block" : "none";
           });
         });
       });
+
+      // Fonction utilitaire pour la date
+      function formaterDate(dateString) {
+        if (!dateString) return "-";
+        const date = new Date(dateString);
+        return date.toLocaleDateString("fr-FR", {
+          day: "numeric",
+          month: "short",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      // 2. Chargement des données au démarrage
+      document.addEventListener("DOMContentLoaded", async () => {
+        const token = sessionStorage.getItem("token");
+        if (!token) return;
+
+        try {
+          // --- CHARGEMENT DES STATS ---
+          const statsRes = await fetch("/api/admin/stats", {
+            headers: { Authorization: "Bearer " + token },
+          });
+          const stats = await statsRes.json();
+          document.getElementById("stat-users").textContent = stats.users || 0;
+          document.getElementById("stat-topics").textContent =
+            stats.topics || 0;
+          document.getElementById("stat-ban").textContent = stats.bans || 0;
+
+          // --- CHARGEMENT DES UTILISATEURS ---
+          const usersRes = await fetch("/api/admin/users", {
+            headers: { Authorization: "Bearer " + token },
+          });
+          const users = await usersRes.json();
+          const tbodyUsers = document.getElementById("admin-users-list");
+
+          users.forEach((u) => {
+            let roleBadge =
+              u.typeCompte === "admin"
+                ? '<span class="badge badge-admin">Admin</span>'
+                : u.typeCompte === "banni"
+                  ? '<span class="badge badge-ban">Banni</span>'
+                  : '<span class="badge badge-user">Utilisateur</span>';
+
+            let actionBtn =
+              u.typeCompte === "banni"
+                ? `<button onclick="unbanUser(${u.idUtilisateur})" class="btn btn-action" style="color: #22c55e; border-color: rgba(34, 197, 94, 0.3);">Débannir</button>`
+                : `<button onclick="banUser(${u.idUtilisateur})" class="btn btn-action" style="color: #f59e0b; border-color: rgba(245, 158, 11, 0.3);">Bannir</button>`;
+
+            if (u.pseudo === sessionStorage.getItem("pseudo")) {
+              actionBtn = `<span class="badge badge-info">Vous</span>`;
+            }
+
+            tbodyUsers.innerHTML += `
+                      <tr>
+                          <td>#${u.idUtilisateur}</td>
+                          <td>${u.pseudo}</td>
+                          <td>${u.email}</td>
+                          <td>${roleBadge}</td>
+                          <td>
+                              <div class="action-group">
+                                  ${actionBtn}
+                                  ${u.pseudo !== sessionStorage.getItem("pseudo") ? `<button onclick="supprimerUser(${u.idUtilisateur})" class="btn btn-danger">Supprimer</button>` : ""}
+                              </div>
+                          </td>
+                      </tr>`;
+          });
+
+          // --- CHARGEMENT DES TOPICS ---
+          const topicsRes = await fetch("/api/admin/topics", {
+            headers: { Authorization: "Bearer " + token },
+          });
+          const topics = await topicsRes.json();
+          const tbodyTopics = document.getElementById("admin-topics-list");
+
+          topics.forEach((t) => {
+            tbodyTopics.innerHTML += `
+                      <tr>
+                          <td>#${t.idTopic}</td>
+                          <td style="font-weight: bold; color: white;">${t.titre}</td>
+                          <td>${t.pseudo || "Anonyme"}</td>
+                          <td>${formaterDate(t.dateDeCreation)}</td>
+                          <td>
+                              <button onclick="supprimerTopicGlobal(${t.idTopic})" class="btn btn-danger">Supprimer</button>
+                          </td>
+                      </tr>`;
+          });
+
+          // --- CHARGEMENT DES MESSAGES ---
+          const messagesRes = await fetch("/api/admin/messages", {
+            headers: { Authorization: "Bearer " + token },
+          });
+          const messages = await messagesRes.json();
+          const tbodyMessages = document.getElementById("admin-messages-list");
+
+          messages.forEach((m) => {
+            // Tronquer le message s'il est trop long
+            const contenuCourt =
+              m.contenu.length > 50
+                ? m.contenu.substring(0, 50) + "..."
+                : m.contenu;
+
+            tbodyMessages.innerHTML += `
+                      <tr>
+                          <td>#${m.idMessage}</td>
+                          <td style="color: #e4e4e7;">${contenuCourt}</td>
+                          <td>${m.pseudo || "Anonyme"}</td>
+                          <td><span class="badge badge-user">${m.topicTitre ? m.topicTitre.substring(0, 20) + "..." : "Topic inconnu"}</span></td>
+                          <td>
+                              <button onclick="supprimerMessageGlobal(${m.idMessage})" class="btn btn-danger">Supprimer</button>
+                          </td>
+                      </tr>`;
+          });
+        } catch (err) {
+          console.error("Erreur chargement admin :", err);
+        }
+      });
+
+      // 3. FONCTIONS DE MODÉRATION
+      async function supprimerUser(id) {
+        if (!confirm("Supprimer ce compte et toutes ses données ?")) return;
+        await fetch(`/api/admin/users/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: "Bearer " + sessionStorage.getItem("token"),
+          },
+        });
+        location.reload();
+      }
+
+      async function banUser(id) {
+        if (!confirm("Bannir cet utilisateur ?")) return;
+        await fetch(`/api/admin/users/${id}/ban`, {
+          method: "PUT",
+          headers: {
+            Authorization: "Bearer " + sessionStorage.getItem("token"),
+          },
+        });
+        location.reload();
+      }
+
+      async function unbanUser(id) {
+        if (!confirm("Débannir cet utilisateur ?")) return;
+        await fetch(`/api/admin/users/${id}/unban`, {
+          method: "PUT",
+          headers: {
+            Authorization: "Bearer " + sessionStorage.getItem("token"),
+          },
+        });
+        location.reload();
+      }
+
+      async function supprimerTopicGlobal(id) {
+        if (
+          !confirm("Supprimer définitivement ce topic et tous ses messages ?")
+        )
+          return;
+        await fetch(`/api/admin/topics/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: "Bearer " + sessionStorage.getItem("token"),
+          },
+        });
+        location.reload();
+      }
+
+      async function supprimerMessageGlobal(id) {
+        if (!confirm("Supprimer ce message ?")) return;
+        await fetch(`/api/admin/messages/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: "Bearer " + sessionStorage.getItem("token"),
+          },
+        });
+        location.reload();
+      }
     </script>
-
-    <!-- FOOTER -->
-    <footer class="site-footer">
-      <div class="footer-inner">
-        <div class="logo">
-          <img
-            src="/assets/lounge-transparent.png"
-            alt="Le Lounge"
-            style="height: 32px; width: auto; opacity: 0.5"
-          />
-        </div>
-        <div>© 2026 Forum Ynov</div>
-      </div>
-    </footer>
-
-    <script src="js/main.js"></script>
-    <script src="js/admin.js"></script>
-    <link rel="icon" type="image/x-icon" href="assets/lounge-transparent.png" />
   </body>
 </html>

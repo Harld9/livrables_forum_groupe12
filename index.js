@@ -47,6 +47,9 @@ const topicRouter = require('./app/backend/router/topic');
 app.use('/api', topicRouter);
 
 
+const adminRouter = require('./app/backend/router/admin');
+app.use('/api/admin', adminRouter);
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
 

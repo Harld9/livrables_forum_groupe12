@@ -1,4 +1,4 @@
-const db = require('../database/connexiondb.js')
+const db = require('../database/connexiondb.js');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
@@ -56,6 +56,10 @@ exports.connecterClient = async (req, res) => {
             return res.status(401).json({ message: "Identifiant ou mot de passe incorrect." });
         }
 
+        if (utilisateur.typeCompte === 'banni') {
+            return res.status(403).json({ message: "Accès refusé : Votre compte a été banni du Lounge." });
+        }
+
         const token = jwt.sign(
             { id: utilisateur.idUtilisateur },
             process.env.CLEJWT,
@@ -65,7 +69,8 @@ exports.connecterClient = async (req, res) => {
         return res.status(200).json({
             message: "Connexion réussie !",
             token: token,
-            pseudo: utilisateur.pseudo
+            pseudo: utilisateur.pseudo,
+            typeCompte: utilisateur.typeCompte
         });
 
     } catch (erreur) {
@@ -75,25 +80,25 @@ exports.connecterClient = async (req, res) => {
 };
 
 exports.getUtilisateurById = async (req, res) => {
-    const id = Number(req.params.id)
+    const id = Number(req.params.id);
 
     if (!Number.isInteger(id) || id <= 0) {
-        return res.status(400).json({ message: 'ID utilisateur invalide.' })
+        return res.status(400).json({ message: 'ID utilisateur invalide.' });
     }
 
     try {
         const [resultat] = await db.query(
             'SELECT idUtilisateur, pseudo, email, dateDeCreation, typeCompte, photoDeProfil, Biographie, derniereConnexion FROM Utilisateur WHERE idUtilisateur = ?',
             [id]
-        )
+        );
 
         if (resultat.length === 0) {
-            return res.status(404).json({ message: 'Utilisateur introuvable.' })
+            return res.status(404).json({ message: 'Utilisateur introuvable.' });
         }
 
-        return res.status(200).json(resultat[0])
+        return res.status(200).json(resultat[0]);
     } catch (erreur) {
-        console.error(erreur)
-        return res.status(500).json({ message: 'Erreur lors de la récupération utilisateur.' })
+        console.error(erreur);
+        return res.status(500).json({ message: 'Erreur lors de la récupération utilisateur.' });
     }
-}
+};

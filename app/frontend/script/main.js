@@ -1,4 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const typeCompte = sessionStorage.getItem('typeCompte');
+    const btnAdmin = document.getElementById('btn-nav-admin');
+
+    if (btnAdmin && typeCompte === 'admin') {
+        btnAdmin.style.display = 'inline-block';
+    }
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
     const boutonConnexion = document.getElementById('boutonconnexion');
     const token = sessionStorage.getItem('token');
     const pseudo = sessionStorage.getItem('pseudo');
