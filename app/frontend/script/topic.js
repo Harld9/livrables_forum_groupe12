@@ -1,67 +1,56 @@
-//récupère l'url de la page actuelle
-const url = window.location.search
-
-//récupère les paramètres de la page actuelle
+const url = window.location.search;
 const params = new URLSearchParams(url);
-
-//récupère l'id contenu dans l'url et transforme l'id en int via parseint
 const idUrl = parseInt(params.get("idTopic"));
 
-const boutonRecherche = document.getElementById('btn-rechercher')
-const inputRecherche = document.getElementById('search-input')
-const topicsList = document.getElementById('topics-list')
-const formulaireRecherche = inputRecherche ? inputRecherche.closest('form') : null
+const boutonRecherche = document.getElementById('btn-rechercher');
+const inputRecherche = document.getElementById('search-input');
+const topicsList = document.getElementById('topics-list');
+const formulaireRecherche = inputRecherche ? inputRecherche.closest('form') : null;
+
+let tagActuel = '';
+let pageActuelle = 1;
 
 if (formulaireRecherche) {
-    formulaireRecherche.addEventListener('submit', rechercherTopic)
+    formulaireRecherche.addEventListener('submit', rechercherTopic);
 } else if (boutonRecherche) {
-    boutonRecherche.addEventListener('click', rechercherTopic)
+    boutonRecherche.addEventListener('click', rechercherTopic);
 }
 
 if (inputRecherche) {
-    inputRecherche.addEventListener('input', rechercherTopic)
+    inputRecherche.addEventListener('input', rechercherTopic);
 }
-
 
 const token = sessionStorage.getItem('token');
-
-
 const formulaireReponse = document.getElementById('new-reply-form');
 
-
-if (!token) {
-
-    if (formulaireReponse) {
-        formulaireReponse.style.display = 'none';
-    }
+if (!token && formulaireReponse) {
+    formulaireReponse.style.display = 'none';
 }
-async function afficherTopic() {
 
+async function afficherTopic() {
     if (isNaN(idUrl)) {
-        window.location.href = '/topics'
-        return
+        window.location.href = '/topics';
+        return;
     }
 
     try {
-        // On demande les données à l'API en GET au format JSON
-        const reponse = await fetch(`/api/afficherTopic/${idUrl}`, {
+        const triActuel = params.get("tri") || 'asc';
+        const reponse = await fetch(`/api/afficherTopic/${idUrl}?tri=${triActuel}`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
-        })
+        });
 
-        const donnees = await reponse.json()
-        console.log(donnees)
+        const donnees = await reponse.json();
+
         if (reponse.ok) {
-            console.log('Réussite d\'affichage de la page')
-            const titreTopic = document.getElementById('topic-title')
-            const contenuTopic = document.getElementById('topic-body')
-            titreTopic.textContent = donnees.topic.titre
-            contenuTopic.textContent = donnees.topic.contenu
+            const titreTopic = document.getElementById('topic-title');
+            const contenuTopic = document.getElementById('topic-body');
+            titreTopic.textContent = donnees.topic.titre;
+            contenuTopic.textContent = donnees.topic.contenu;
 
-
-            const affichageScore = document.getElementById('topic-score') // Remplace par l'ID exact de ton "0" dans ton HTML
+            const affichageScore = document.getElementById('topic-score');
             if (affichageScore) {
-                affichageScore.textContent = donnees.topic.score
+                affichageScore.textContent = donnees.topic.score;
             }
 
             const actionsFooter = document.querySelector('.topic-actions');
@@ -70,359 +59,357 @@ async function afficherTopic() {
                 const boutonSupprimerTopic = document.createElement('button');
                 boutonSupprimerTopic.textContent = 'Supprimer le topic';
                 boutonSupprimerTopic.className = 'btn btn-ghost btn-danger';
-
                 boutonSupprimerTopic.onclick = () => supprimerTopic(idUrl);
-
                 if (actionsFooter) {
                     actionsFooter.appendChild(boutonSupprimerTopic);
                 }
             }
 
-            listeCommentaire = document.getElementById('comments-list')
+            const listeCommentaire = document.getElementById('comments-list');
 
             donnees.messages.forEach(msg => {
-
-                const divMessage = document.createElement("div")
-                divMessage.className = "comment-card"
-
-
+                const divMessage = document.createElement("div");
+                divMessage.className = "comment-card";
                 divMessage.innerHTML = `
-        <div class="comment-body">${msg.contenu}</div>
-        <div class="comment-meta">Par <strong>${msg.pseudo}</strong></div>
-    `
+                    <div class="comment-body">${msg.contenu}</div>
+                    <div class="comment-meta">Par <strong>${msg.pseudo}</strong></div>
+                `;
 
-
-                const pseudoConnecte = sessionStorage.getItem('pseudo')
+                const pseudoConnecte = sessionStorage.getItem('pseudo');
                 if (pseudoConnecte === msg.pseudo) {
-                    const boutonSupprimer = document.createElement("button")
-                    boutonSupprimer.textContent = "Supprimer"
-                    boutonSupprimer.className = "btn btn-ghost btn-danger"
-
-
-                    boutonSupprimer.onclick = () => supprimerMessage(msg.idMessage)
-
-                    divMessage.appendChild(boutonSupprimer)
+                    const boutonSupprimer = document.createElement("button");
+                    boutonSupprimer.textContent = "Supprimer";
+                    boutonSupprimer.className = "btn btn-ghost btn-danger";
+                    boutonSupprimer.onclick = () => supprimerMessage(msg.idMessage);
+                    divMessage.appendChild(boutonSupprimer);
                 }
 
-                listeCommentaire.appendChild(divMessage)
+                listeCommentaire.appendChild(divMessage);
             });
-
         } else {
-            afficherErreur(donnees.message)
-            // On redirige vers la page générale des topics*/
-            window.location.href = '/topics'
+            afficherErreur(donnees.message);
+            window.location.href = '/topics';
         }
-
+    } catch (erreur) {
+        console.error(erreur);
+        afficherErreur('Erreur réseau, veuillez réessayer.');
     }
-
-    catch (erreur) {
-        // On affiche une erreur générique si le fetch échoue (réseau, serveur down...)
-        console.error('Erreur de connexion :', erreur)
-        afficherErreur('Erreur réseau, veuillez réessayer.')
-    }
-
 }
 
 async function publierMessage(e) {
-    e.preventDefault()
-    const message = document.getElementById('reply-text')
-    const contenuMessage = message.value
-    const jeton = sessionStorage.getItem('token')
+    e.preventDefault();
+    const message = document.getElementById('reply-text');
+    const contenuMessage = message.value;
+    const jeton = sessionStorage.getItem('token');
     try {
-        // On envoie les données à l'API en POST au format JSON
         const reponse = await fetch('/api/creerMessage', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jeton },
-            // On convertit l'objet JS en JSON pour l'envoyer
             body: JSON.stringify({ message: contenuMessage, idTopic: idUrl })
-        })
-
-        const donnees = await reponse.json()
-
+        });
         if (reponse.ok) {
-            // On actualise la page pour voir le nouveau message 
-            window.location.reload()
+            window.location.reload();
         } else {
-            // On affiche le message d'erreur renvoyé par le serveur
-            afficherErreur(donnees.message)
+            const donnees = await reponse.json();
+            afficherErreur(donnees.message);
         }
     } catch (erreur) {
-        // On affiche une erreur générique si le fetch échoue (réseau, serveur down...)
-        console.error('Erreur de connexion :', erreur)
-        afficherErreur('Erreur réseau, veuillez réessayer.')
+        console.error(erreur);
+        afficherErreur('Erreur réseau, veuillez réessayer.');
     }
-
 }
 
-// Fonction pour créer un nouveau topic (utilisée sur create-topic.html)
-// On initialise les variables seulement si on est sur la page create-topic
-let titre = null
-let contenu = null
+let titre = null;
+let contenu = null;
 
 if (document.getElementById('titreTopic')) {
-    titre = document.getElementById('titreTopic')
-    contenu = document.getElementById('contenuTopic')
-    const boutonPublier = document.getElementById('boutonPublier')
-
+    titre = document.getElementById('titreTopic');
+    contenu = document.getElementById('contenuTopic');
+    const boutonPublier = document.getElementById('boutonPublier');
     if (boutonPublier) {
         boutonPublier.addEventListener("click", publier);
     }
 }
 
 async function publier() {
-    const contenuTitre = titre.value
-    const contenuTopic = contenu.value
-    const jeton = sessionStorage.getItem('token')
-    let idTag = 0
+    const contenuTitre = titre.value;
+    const contenuTopic = contenu.value;
+    const jeton = sessionStorage.getItem('token');
+    let idTag = 0;
     if (document.querySelector('input[name="idTag"]:checked')) {
-        idTag = document.querySelector('input[name="idTag"]:checked').value
+        idTag = document.querySelector('input[name="idTag"]:checked').value;
     }
 
     try {
-        // On envoie les données à l'API en POST au format JSON
         const reponse = await fetch('/api/creerTopic', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jeton },
-            // On convertit l'objet JS en JSON pour l'envoyer
             body: JSON.stringify({ titre: contenuTitre, contenu: contenuTopic, tags: idTag })
-        })
-
-        const donnees = await reponse.json()
-
+        });
+        const donnees = await reponse.json();
         if (reponse.ok) {
-            // On redirige vers la page du topic qui vient d'être créé
-            window.location.href = '/topicTemplate?idTopic=' + donnees.id
+            window.location.href = '/topicTemplate?idTopic=' + donnees.id;
         } else {
-            // On affiche le message d'erreur renvoyé par le serveur
-            afficherErreur(donnees.message)
+            afficherErreur(donnees.message);
         }
     } catch (erreur) {
-        // On affiche une erreur générique si le fetch échoue (réseau, serveur down...)
-        console.error('Erreur de connexion :', erreur)
-        afficherErreur('Erreur réseau, veuillez réessayer.')
+        console.error(erreur);
+        afficherErreur('Erreur réseau, veuillez réessayer.');
     }
 }
 
-// Fonction utilitaire pour afficher les messages d'erreur
 function afficherErreur(message) {
-    // On récupère la boite de message déjà présente dans le HTML
-    const boite = document.getElementById('boiteMessage')
-
+    const boite = document.getElementById('boiteMessage');
     if (boite) {
-        // On ajoute la classe d'erreur pour le style
-        boite.classList.add('message-erreur')
-        // On affiche la boite — elle est cachée par défaut
-        boite.style.display = 'block'
-        // On utilise textContent — jamais innerHTML avec des données externes
-        boite.textContent = message
-    } else {
-        // Fallback en cas d'absence de la boîte
-        console.error('Message d\'erreur:', message)
+        boite.classList.add('message-erreur');
+        boite.style.display = 'block';
+        boite.textContent = message;
     }
 }
 
 function formaterDate(dateString) {
-    if (!dateString) {
-        return 'Aujourd\'hui'
-    }
-
-    const date = new Date(dateString)
-    const options = { day: 'numeric', month: 'long' }
-    return date.toLocaleDateString('fr-FR', options)
+    if (!dateString) return 'Aujourd\'hui';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
 }
 
 function creerCarteTopic(topic, index) {
-    const topicCard = document.createElement('a')
-    topicCard.className = 'topic-card'
+    const topicCard = document.createElement('a');
+    topicCard.className = 'topic-card';
+    topicCard.href = '/topicTemplate?idTopic=' + (topic.idTopic || topic.id);
+    topicCard.style.textDecoration = 'none';
+    topicCard.style.color = 'inherit';
+    topicCard.style.display = 'flex';
 
-    topicCard.href = '/topicTemplate?idTopic=' + (topic.idTopic || topic.id)
+    const numero = document.createElement('div');
+    numero.className = 'topic-card-num';
+    numero.textContent = '#' + (((pageActuelle - 1) * 10) + index + 1);
 
-    topicCard.style.textDecoration = 'none'
-    topicCard.style.color = 'inherit'
-    topicCard.style.display = 'flex'
+    const cardBody = document.createElement('div');
+    cardBody.className = 'topic-card-body';
 
-    const numero = document.createElement('div')
-    numero.className = 'topic-card-num'
-    numero.textContent = '#' + (index + 1)
+    const meta = document.createElement('div');
+    meta.className = 'topic-card-meta';
 
-    const cardBody = document.createElement('div')
-    cardBody.className = 'topic-card-body'
+    const badge = document.createElement('span');
+    badge.className = 'badge badge-open';
+    badge.textContent = 'Ouvert';
 
-    const meta = document.createElement('div')
-    meta.className = 'topic-card-meta'
+    const tag = document.createElement('span');
+    tag.className = 'tag tag-sm';
+    tag.textContent = 'Forum';
 
-    const badge = document.createElement('span')
-    badge.className = 'badge badge-open'
-    badge.textContent = 'Ouvert'
+    meta.appendChild(badge);
+    meta.appendChild(tag);
 
-    const tag = document.createElement('span')
-    tag.className = 'tag tag-sm'
-    tag.textContent = 'Forum'
+    const info = document.createElement('div');
+    info.className = 'topic-card-info';
+    info.innerHTML = `${topic.pseudo || 'Anonyme'} <span class="sep">•</span> ${formaterDate(topic.dateDeCreation)}`;
 
-    meta.appendChild(badge)
-    meta.appendChild(tag)
+    const titleBlock = document.createElement('div');
+    titleBlock.className = 'topic-card-title';
+    titleBlock.textContent = topic.titre || 'Topic sans titre';
 
-    const info = document.createElement('div')
-    info.className = 'topic-card-info'
-    info.innerHTML = `${topic.pseudo || 'Anonyme'} <span class="sep">•</span> ${formaterDate(topic.dateDeCreation)}`
+    cardBody.appendChild(meta);
+    cardBody.appendChild(titleBlock);
+    cardBody.appendChild(info);
 
-    const titleBlock = document.createElement('div')
-    titleBlock.className = 'topic-card-title'
-    titleBlock.textContent = topic.titre || 'Topic sans titre'
+    const arrow = document.createElement('div');
+    arrow.className = 'topic-card-arrow';
+    arrow.textContent = '→';
 
-    cardBody.appendChild(meta)
-    cardBody.appendChild(titleBlock)
-    cardBody.appendChild(info)
+    topicCard.appendChild(numero);
+    topicCard.appendChild(cardBody);
+    topicCard.appendChild(arrow);
 
-    const arrow = document.createElement('div')
-    arrow.className = 'topic-card-arrow'
-    arrow.textContent = '→'
-
-    topicCard.appendChild(numero)
-    topicCard.appendChild(cardBody)
-    topicCard.appendChild(arrow)
-
-
-
-
-    return topicCard
+    return topicCard;
 }
 
 async function afficherTopics() {
-    if (!topicsList) {
-        return
-    }
+    const liste = document.getElementById('topics-list');
+    if (!liste) return;
 
     try {
-        const reponse = await fetch('/api/topics', {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
-        })
+        const adresseAPI = tagActuel ? `/api/topics?tag=${tagActuel}&page=${pageActuelle}` : `/api/topics?page=${pageActuelle}`;
+        const reponse = await fetch(adresseAPI);
+        const topics = await reponse.json();
 
-        const topics = await reponse.json()
-
-        if (!reponse.ok) {
-            afficherErreur(topics.message || 'Impossible de charger les topics.')
-            return
-        }
-
-        topicsList.innerHTML = ''
+        liste.innerHTML = '';
 
         if (topics.length === 0) {
-            topicsList.innerHTML = '<p class="empty-state">Aucun topic disponible pour le moment.</p>'
-            return
+            liste.innerHTML = '<p style="color:white; padding:20px;">Aucun topic disponible.</p>';
+            const btnPrecedent = document.getElementById('btn-precedent');
+            const btnSuivant = document.getElementById('btn-suivant');
+            if (btnPrecedent) btnPrecedent.style.visibility = 'hidden';
+            if (btnSuivant) btnSuivant.style.visibility = 'hidden';
+            return;
         }
 
         topics.forEach((topic, index) => {
-            topicsList.appendChild(creerCarteTopic(topic, index))
-        })
+            liste.appendChild(creerCarteTopic(topic, index));
+        });
+
+        const spanPage = document.getElementById('numero-page');
+        if (spanPage) spanPage.textContent = `Page ${pageActuelle}`;
+
+        const btnPrecedent = document.getElementById('btn-precedent');
+        const btnSuivant = document.getElementById('btn-suivant');
+
+        if (btnPrecedent) {
+            btnPrecedent.style.visibility = pageActuelle === 1 ? 'hidden' : 'visible';
+        }
+        if (btnSuivant) {
+            btnSuivant.style.visibility = topics.length < 10 ? 'hidden' : 'visible';
+        }
+
     } catch (erreur) {
-        console.error('Erreur de chargement des topics :', erreur)
-        topicsList.innerHTML = '<p class="message-erreur">Impossible de charger les topics.</p>'
+        console.error(erreur);
+        liste.innerHTML = '<p class="message-erreur">Impossible de charger les topics.</p>';
     }
 }
 
-if (document.getElementById('topics-list')) {
-    afficherTopics()
+function filtrerParTag(idTag, boutonClique) {
+    tagActuel = idTag;
+    pageActuelle = 1;
+
+    document.querySelectorAll('.btn.tag, .tag').forEach(btn => {
+        btn.style.background = 'transparent';
+        btn.style.borderColor = '#444';
+    });
+
+    if (boutonClique) {
+        boutonClique.style.background = '#ff4d4d';
+        boutonClique.style.borderColor = '#ff4d4d';
+    } else {
+        const boutonActif = Array.from(document.querySelectorAll('.btn.tag, .tag')).find(btn => {
+            const onclick = btn.getAttribute('onclick');
+            return onclick && onclick.includes(`'${idTag}'`);
+        });
+        if (boutonActif) {
+            boutonActif.style.background = '#ff4d4d';
+            boutonActif.style.borderColor = '#ff4d4d';
+        }
+    }
+
+    afficherTopics();
 }
 
-if (document.getElementById('topic-title')) {
-    afficherTopic()
+function pageSuivante() {
+    pageActuelle++;
+    afficherTopics();
+    window.scrollTo(0, 0);
+}
 
-    if (document.getElementById('boutonPublier')) {
-        const boutonPublier = document.getElementById('boutonPublier')
-        boutonPublier.addEventListener("click", publierMessage)
+function pagePrecedente() {
+    if (pageActuelle > 1) {
+        pageActuelle--;
+        afficherTopics();
+        window.scrollTo(0, 0);
     }
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    const boutonsTags = document.querySelectorAll('.btn.tag, .tag');
+
+    boutonsTags.forEach(bouton => {
+        bouton.addEventListener('click', (e) => {
+            e.preventDefault();
+            const texte = bouton.textContent.trim().toLowerCase();
+            let idDuTag = '';
+
+            if (texte === 'film') idDuTag = '1';
+            else if (texte === 'série') idDuTag = '2';
+            else if (texte === 'anime') idDuTag = '3';
+            else if (texte === 'question') idDuTag = '4';
+
+            filtrerParTag(idDuTag, bouton);
+        });
+    });
+
+    if (document.getElementById('topics-list')) {
+        afficherTopics();
+    }
+
+    if (document.getElementById('topic-title')) {
+        afficherTopic();
+        const btnPublier = document.getElementById('boutonPublier');
+        if (btnPublier) {
+            btnPublier.addEventListener("click", publierMessage);
+        }
+    }
+
+    const selectTri = document.getElementById('tri-messages');
+    const paramTri = new URLSearchParams(window.location.search).get("tri");
+    if (selectTri && paramTri) {
+        selectTri.value = paramTri;
+    }
+
+    setTimeout(() => {
+        const boutonTous = document.querySelector('.btn.tag');
+        if (boutonTous && !tagActuel) {
+            boutonTous.style.background = '#ff4d4d';
+            boutonTous.style.borderColor = '#ff4d4d';
+        }
+    }, 100);
+});
 
 async function rechercherTopic(e) {
-    if (e) {
-        e.preventDefault()
-    }
-
-    if (!inputRecherche || !topicsList) {
-        return
-    }
-
-    const recherche = inputRecherche.value.trim()
-    console.log("Recherche :", recherche)
+    if (e) e.preventDefault();
+    const liste = document.getElementById('topics-list');
+    if (!inputRecherche || !liste) return;
+    const recherche = inputRecherche.value.trim();
 
     if (!recherche) {
-        afficherTopics()
-        return
-    }
-
-    try {
-        const reponse = await fetch(
-            `/api/rechercheTopic?recherche=${encodeURIComponent(recherche)}`,
-            {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
-            }
-        )
-
-
-        const topics = await reponse.json()
-
-
-        topicsList.innerHTML = ''
-
-        if (!reponse.ok) {
-            afficherErreur(topics.message || 'Erreur lors de la recherche.')
-            return
-        }
-
-        if (topics.length === 0) {
-            topicsList.innerHTML =
-                '<p class="empty-state">Aucun résultat trouvé.</p>'
-            return
-        }
-
-        topics.forEach((topic, index) => {
-            topicsList.appendChild(creerCarteTopic(topic, index))
-        })
-
-    } catch (erreur) {
-        console.error(erreur)
-        afficherErreur('Erreur lors de la recherche.')
-    }
-}
-
-
-async function triTopic() { }
-
-async function supprimerMessage(idMessage) {
-    if (!confirm("Voulez-vous vraiment supprimer ce message ?")) {
+        afficherTopics();
         return;
     }
 
+    try {
+        const reponse = await fetch(`/api/rechercheTopic?recherche=${encodeURIComponent(recherche)}`);
+        const topics = await reponse.json();
+        liste.innerHTML = '';
+
+        if (!reponse.ok) {
+            afficherErreur(topics.message || 'Erreur lors de la recherche.');
+            return;
+        }
+
+        if (topics.length === 0) {
+            liste.innerHTML = '<p style="color:white; padding:20px;">Aucun résultat trouvé.</p>';
+            return;
+        }
+
+        topics.forEach((topic, index) => {
+            liste.appendChild(creerCarteTopic(topic, index));
+        });
+    } catch (erreur) {
+        console.error(erreur);
+    }
+}
+
+async function supprimerMessage(idMessage) {
+    if (!confirm("Voulez-vous vraiment supprimer ce message ?")) return;
     try {
         const reponse = await fetch(`/api/supprimerMessage/${idMessage}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-
                 'Authorization': 'Bearer ' + sessionStorage.getItem('token')
             }
         });
-
-        const donnees = await reponse.json();
-
         if (reponse.ok) {
             window.location.reload();
         } else {
+            const donnees = await reponse.json();
             alert("Erreur : " + donnees.message);
         }
     } catch (erreur) {
-        console.error("Erreur lors de la suppression :", erreur);
-        alert("Une erreur réseau est survenue.");
+        console.error(erreur);
     }
 }
 
 async function supprimerTopic(idTopic) {
     if (!confirm("Voulez-vous vraiment supprimer TOUT ce topic et ses messages ?")) return;
-
     try {
         const reponse = await fetch(`/api/supprimerTopic/${idTopic}`, {
             method: 'DELETE',
@@ -431,7 +418,6 @@ async function supprimerTopic(idTopic) {
                 'Authorization': 'Bearer ' + sessionStorage.getItem('token')
             }
         });
-
         if (reponse.ok) {
             window.location.href = '/topics';
         } else {
@@ -439,42 +425,42 @@ async function supprimerTopic(idTopic) {
             alert("Erreur : " + donnees.message);
         }
     } catch (erreur) {
-        console.error("Erreur :", erreur);
+        console.error(erreur);
     }
 }
 
 async function envoyerVote(valeurVote) {
     const jeton = sessionStorage.getItem('token');
-
     if (!jeton) {
         alert("Vous devez être connecté pour évaluer un topic.");
         return;
     }
-
     try {
-
         const reponse = await fetch(`/api/likerTopic/${idUrl}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + jeton
             },
-
             body: JSON.stringify({ vote: valeurVote })
         });
-
-        const donnees = await reponse.json();
-
         if (reponse.ok) {
-
             window.location.reload();
         } else {
-
+            const donnees = await reponse.json();
             alert("Erreur : " + donnees.message);
         }
-
     } catch (erreur) {
-        console.error("Erreur d'envoi du vote :", erreur);
-        alert("Erreur réseau lors de l'envoi du vote.");
+        console.error(erreur);
     }
+}
+
+function changerTri(valeurTri) {
+    const params = new URLSearchParams(window.location.search);
+    const idTopic = params.get("idTopic");
+    window.location.href = `/topicTemplate?idTopic=${idTopic}&tri=${valeurTri}`;
+}
+
+function changerTriTopics(valeurTri) {
+    console.log(valeurTri);
 }

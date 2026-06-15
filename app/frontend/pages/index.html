@@ -19,7 +19,6 @@
 
         <nav class="main-nav">
           <a href="/" class="nav-link">Accueil</a>
-          <a href="/topics" class="nav-link">Topics</a>
           <a href="/help" class="nav-link">Aide</a>
           <a href="/connexion" class="nav-link nav-cta" id="boutonconnexion"
             >Se connecter / S'inscrire</a
@@ -190,10 +189,42 @@
 
         <section class="topics-list" id="topics-list"></section>
 
-        <div class="pagination">
-          <button class="btn btn-ghost btn-sm">←</button>
-          <span class="pagination-info">Page 1</span>
-          <button class="btn btn-ghost btn-sm">→</button>
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 30px 0;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              gap: 15px;
+              margin: 30px 0;
+            "
+          >
+            <button
+              id="btn-precedent"
+              class="btn btn-ghost"
+              onclick="pagePrecedente()"
+            >
+              ←
+            </button>
+            <span id="numero-page" style="color: white; font-weight: bold"
+              >Page 1</span
+            >
+            <button
+              id="btn-suivant"
+              class="btn btn-ghost"
+              onclick="pageSuivante()"
+            >
+              →
+            </button>
+          </div>
         </div>
       </div>
     </main>

@@ -58,7 +58,7 @@ exports.connecterClient = async (req, res) => {
 
         const token = jwt.sign(
             { id: utilisateur.idUtilisateur },
-            process.env.JWT_SECRET,
+            process.env.CLEJWT,
             { expiresIn: '24h' }
         );
 

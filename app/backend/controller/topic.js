@@ -1,87 +1,81 @@
-// On importe la connexion à la base de données
-const db = require('../database/connexiondb.js')
+const db = require('../database/connexiondb.js');
 
-//
-exports.listerTopics = async (req, res) => {
-    try {
-        const sql = `
-            SELECT t.idTopic, t.titre, t.contenu, t.dateDeCreation, t.etat, u.pseudo
-            FROM topic t
-            LEFT JOIN Utilisateur u ON t.idUtilisateur = u.idUtilisateur
-            ORDER BY t.dateDeCreation DESC
-        `
-
-        const [resultat] = await db.query(sql)
-        return res.status(200).json(resultat)
-    } catch (erreur) {
-        console.error(erreur)
-        return res.status(500).json({ message: 'Erreur lors du chargement des topics.' })
-    }
-}
-
-exports.creerTopic = async (req, res) => {
-    const titre = req.body.titre;
-    const contenu = req.body.contenu;
-    const idUtilisateur = req.auth.id
-    const tags = req.body.tags
-
-    if (!titre || !contenu) {
-        return res.status(400).json({ message: 'Champs requis manquants.' })
-    }
+exports.listerTopics = async (req, res, next) => {
+    const tagSelectionne = req.query.tag;
+    const page = parseInt(req.query.page) || 1;
+    const limite = 10;
+    const offset = (page - 1) * limite;
 
     try {
-        // On vérifie si un topic avec un titre identique existe
-        // pour éviter les doublons en base de données
-        const [existant] = await db.query(
-            'SELECT idTopic FROM topic WHERE titre = ?', [titre]
-        )
+        let sql;
+        const parametresSQL = [];
 
-        // Si on trouve un résultat, on refuse la création du topic
-        if (existant.length > 0) {
-            return res.status(409).json({ message: 'Un topic avec ce titre, existe déjà.' })
+        if (tagSelectionne && tagSelectionne !== '') {
+            sql = `
+                SELECT topic.idTopic, topic.titre, topic.contenu, topic.dateDeCreation, topic.etat, Utilisateur.pseudo
+                FROM topic
+                LEFT JOIN Utilisateur ON topic.idUtilisateur = Utilisateur.idUtilisateur
+                JOIN appartenir ON topic.idTopic = appartenir.idTopic
+                WHERE appartenir.idTag = ?
+            `;
+            parametresSQL.push(tagSelectionne);
+        } else {
+            sql = `
+                SELECT topic.idTopic, topic.titre, topic.contenu, topic.dateDeCreation, topic.etat, Utilisateur.pseudo
+                FROM topic
+                LEFT JOIN Utilisateur ON topic.idUtilisateur = Utilisateur.idUtilisateur
+            `;
         }
 
-        // On prépare la requête d'insertion
-        // On utilise des ? pour éviter les injections SQL
-        const sql = `
-            INSERT INTO topic (titre, contenu, idUtilisateur, dateDeCreation )
-            VALUES (?, ?, ?, CURDATE())
-        `
+        sql += ` ORDER BY topic.dateDeCreation DESC LIMIT ? OFFSET ?`;
+        parametresSQL.push(limite, offset);
 
-        const sqlAppartenir = `
-            INSERT INTO appartenir (idTopic, idTag)
-            VALUES (?, ?)
-        `
+        const [resultat] = await db.query(sql, parametresSQL);
+        return res.status(200).json(resultat);
+    } catch (erreur) {
+        next(erreur);
+    }
+};
 
-        // On envoie la requête à la base de données avec les valeurs dans le bon ordre
-        const [resultat] = await db.query(sql, [titre, contenu, idUtilisateur])
+exports.creerTopic = async (req, res, next) => {
+    const titre = req.body.titre;
+    const contenu = req.body.contenu;
+    const idUtilisateur = req.auth.id;
+    const tags = req.body.tags;
 
-        // On envoie la requête à la base de données avec les valeurs dans le bon ordre
-        const [resultatAppatenir] = await db.query(sqlAppartenir, [resultat.insertId, tags])
+    if (!titre || !contenu) {
+        return res.status(400).json({ message: 'Champs requis manquants.' });
+    }
 
-        // On confirme que l'inscription s'est bien passée avec un code 201 (créé) et on retourne l'id du topic
-        res.status(201).json({ message: 'Publication du topic réussie !', id: resultat.insertId })
+    try {
+        const [existant] = await db.query('SELECT idTopic FROM Topic WHERE titre = ?', [titre]);
+        if (existant.length > 0) {
+            return res.status(409).json({ message: 'Un topic avec ce titre, existe déjà.' });
+        }
 
+        const sql = `INSERT INTO Topic (titre, contenu, idUtilisateur, dateDeCreation ) VALUES (?, ?, ?, CURDATE())`;
+        const sqlAppartenir = `INSERT INTO Appartenir (idTopic, idTag) VALUES (?, ?)`;
 
+        const [resultat] = await db.query(sql, [titre, contenu, idUtilisateur]);
+        await db.query(sqlAppartenir, [resultat.insertId, tags]);
+
+        res.status(201).json({ message: 'Publication du topic réussie !', id: resultat.insertId });
 
     } catch (erreur) {
-        // On affiche l'erreur dans le terminal pour déboguer
-        console.error(erreur)
-        // On informe le client qu'une erreur s'est produite côté serveur
-        res.status(500).json({ message: "Erreur lors de la publication du topic." })
+        next(erreur);
     }
-}
+};
 
-
-exports.afficherTopic = async (req, res) => {
+exports.afficherTopic = async (req, res, next) => {
     const idTopic = req.params.idTopic;
+    const ordreTri = req.query.tri === 'desc' ? 'DESC' : 'ASC';
 
     try {
         const sqlTopic = `
-            SELECT t.*, u.pseudo 
-            FROM Topic t 
-            JOIN Utilisateur u ON t.idUtilisateur = u.idUtilisateur 
-            WHERE t.idTopic = ?
+            SELECT Topic.*, Utilisateur.pseudo 
+            FROM Topic 
+            JOIN Utilisateur ON Topic.idUtilisateur = Utilisateur.idUtilisateur 
+            WHERE Topic.idTopic = ?
         `;
         const [lignesTopic] = await db.query(sqlTopic, [idTopic]);
 
@@ -91,17 +85,16 @@ exports.afficherTopic = async (req, res) => {
 
         const topicTrouve = lignesTopic[0];
 
-        // 2. On calcule le score total des likes
         const sqlScore = "SELECT SUM(vote) AS scoreTotal FROM Evaluer WHERE idTopic = ?";
         const [resultatScore] = await db.query(sqlScore, [idTopic]);
-
         topicTrouve.score = resultatScore[0].scoreTotal || 0;
 
         const sqlMessages = `
-            SELECT m.*, u.pseudo 
-            FROM Message m 
-            JOIN Utilisateur u ON m.idUtilisateur = u.idUtilisateur 
-            WHERE m.idTopic = ?
+            SELECT Message.*, Utilisateur.pseudo 
+            FROM Message 
+            JOIN Utilisateur ON Message.idUtilisateur = Utilisateur.idUtilisateur 
+            WHERE Message.idTopic = ?
+            ORDER BY Message.idMessage ${ordreTri}
         `;
         const [messages] = await db.query(sqlMessages, [idTopic]);
 
@@ -111,172 +104,115 @@ exports.afficherTopic = async (req, res) => {
         });
 
     } catch (erreur) {
-        console.error("Erreur dans afficherTopic:", erreur);
-        res.status(500).json({ message: "Erreur serveur lors de la récupération du topic." });
+        next(erreur);
     }
 };
 
-exports.creerMessage = async (req, res) => {
-
-    const idTopic = req.body.idTopic
-    const contenu = req.body.message
-    const idUtilisateur = req.auth.id
+exports.creerMessage = async (req, res, next) => {
+    const idTopic = req.body.idTopic;
+    const contenu = req.body.message;
+    const idUtilisateur = req.auth.id;
 
     if (!contenu) {
-        return res.status(400).json({ message: 'Champs requis manquants.' })
+        return res.status(400).json({ message: 'Champs requis manquants.' });
     }
 
     try {
-        // On prépare la requête d'insertion
-        // On utilise des ? pour éviter les injections SQL
-        const sql = `
-            INSERT INTO message (contenu, idUtilisateur, idTopic, dateDeCreation)
-            VALUES (?, ?, ?, CURDATE())
-        `
-
-        // On envoie la requête à la base de données avec les valeurs dans le bon ordre
-        const [resultat] = await db.query(sql, [contenu, idUtilisateur, idTopic])
-
-
-        // On confirme que l'inscription s'est bien passée avec un code 201 (créé) et on retourne l'id du topic
-        res.status(201).json({ message: 'Publication du message réussie !', id: resultat.insertId })
-
-
-
+        const sql = `INSERT INTO Message (contenu, idUtilisateur, idTopic, dateDeCreation) VALUES (?, ?, ?, CURDATE())`;
+        const [resultat] = await db.query(sql, [contenu, idUtilisateur, idTopic]);
+        res.status(201).json({ message: 'Publication du message réussie !', id: resultat.insertId });
     } catch (erreur) {
-        // On affiche l'erreur dans le terminal pour déboguer
-        console.error(erreur)
-        // On informe le client qu'une erreur s'est produite côté serveur
-        res.status(500).json({ message: "Erreur lors de la publication du message." })
+        next(erreur);
     }
-}
+};
 
-exports.rechercheTopics = async (req, res) => {
-    const recherche = req.query.recherche
+exports.rechercheTopics = async (req, res, next) => {
+    const recherche = req.query.recherche;
 
     if (!recherche) {
-        return res.status(400).json({
-            message: "Veuillez saisir un terme de recherche."
-        })
+        return res.status(400).json({ message: "Veuillez saisir un terme de recherche." });
     }
 
     try {
-        const rechercheMinuscule = recherche.toLowerCase()
-
+        const rechercheMinuscule = recherche.toLowerCase();
         const sql = `
-            SELECT t.idTopic, t.titre, t.contenu, t.dateDeCreation, t.etat, u.pseudo
-            FROM topic t
-            LEFT JOIN Utilisateur u ON t.idUtilisateur = u.idUtilisateur
-            WHERE LOWER(t.titre) LIKE ? OR LOWER(t.contenu) LIKE ?
-            ORDER BY t.dateDeCreation DESC
-        `
-
-        const [resultat] = await db.query(sql, [
-            `%${rechercheMinuscule}%`,
-            `%${rechercheMinuscule}%`
-        ])
-
-        res.status(200).json(resultat)
-
+            SELECT Topic.idTopic, Topic.titre, Topic.contenu, Topic.dateDeCreation, Topic.etat, Utilisateur.pseudo
+            FROM Topic
+            LEFT JOIN Utilisateur ON Topic.idUtilisateur = Utilisateur.idUtilisateur
+            WHERE LOWER(Topic.titre) LIKE ? OR LOWER(Topic.contenu) LIKE ?
+            ORDER BY Topic.dateDeCreation DESC
+        `;
+        const [resultat] = await db.query(sql, [`%${rechercheMinuscule}%`, `%${rechercheMinuscule}%`]);
+        res.status(200).json(resultat);
     } catch (erreur) {
-        console.error(erreur)
-        res.status(500).json({
-            message: "Erreur lors de la recherche."
-        })
+        next(erreur);
     }
-}
+};
 
-
-exports.tri = async (req, res) => {
-
-
-
-
-
-
-
-}
-
-
-exports.supprimerMessage = async (req, res) => {
+exports.supprimerMessage = async (req, res, next) => {
     const idMessage = req.params.idMessage;
     const idUtilisateurConnecte = req.auth.id;
 
     try {
         const [resultat] = await db.query('SELECT idUtilisateur FROM Message WHERE idMessage = ?', [idMessage]);
+        if (resultat.length === 0) return res.status(404).json({ message: 'Message introuvable.' });
 
-        if (resultat.length === 0) {
-            return res.status(404).json({ message: 'Message introuvable.' });
+        const [utilisateur] = await db.query('SELECT typeCompte FROM Utilisateur WHERE idUtilisateur = ?', [idUtilisateurConnecte]);
+        const estAdmin = utilisateur[0].typeCompte === 'admin';
+        const estProprietaire = resultat[0].idUtilisateur === idUtilisateurConnecte;
+
+        if (!estProprietaire && !estAdmin) {
+            return res.status(403).json({ message: "Action non autorisée : vous n'avez pas les droits." });
         }
 
-        if (resultat[0].idUtilisateur !== idUtilisateurConnecte) {
-            return res.status(403).json({ message: 'Action non autorisée : vous n\'êtes pas le propriétaire de ce message.' });
-        }
         await db.query('DELETE FROM Message WHERE idMessage = ?', [idMessage]);
         res.status(200).json({ message: 'Message supprimé avec succès.' });
-
     } catch (erreur) {
-        console.error(erreur)
-        res.status(500).json({
-            message: "Erreur lors de la recherche."
-        })
+        next(erreur);
     }
-}
+};
 
-exports.supprimerTopic = async (req, res) => {
+exports.supprimerTopic = async (req, res, next) => {
     const idTopic = req.params.idTopic;
     const idUtilisateurConnecte = req.auth.id;
 
     try {
-        const [resultat] = await db.query('SELECT idUtilisateur FROM topic WHERE idTopic = ?', [idTopic]);
+        const [resultat] = await db.query('SELECT idUtilisateur FROM Topic WHERE idTopic = ?', [idTopic]);
+        if (resultat.length === 0) return res.status(404).json({ message: 'Topic introuvable.' });
 
-        if (resultat.length === 0) {
-            return res.status(404).json({ message: 'Topic introuvable.' });
+        const [utilisateur] = await db.query('SELECT typeCompte FROM Utilisateur WHERE idUtilisateur = ?', [idUtilisateurConnecte]);
+        const estAdmin = utilisateur[0].typeCompte === 'admin';
+        const estProprietaire = resultat[0].idUtilisateur === idUtilisateurConnecte;
+
+        if (!estProprietaire && !estAdmin) {
+            return res.status(403).json({ message: "Action non autorisée : vous n'avez pas les droits." });
         }
 
-        if (resultat[0].idUtilisateur !== idUtilisateurConnecte) {
-            return res.status(403).json({ message: 'Action non autorisée : vous n\'êtes pas le propriétaire de ce topîc.' });
-        }
-        await db.query('DELETE FROM topic WHERE idTopic = ?', [idTopic]);
+        await db.query('DELETE FROM Topic WHERE idTopic = ?', [idTopic]);
         res.status(200).json({ message: 'Topic supprimé avec succès.' });
-
     } catch (erreur) {
-        console.error(erreur)
-        res.status(500).json({
-            message: "Erreur lors de la recherche."
-        })
+        next(erreur);
     }
-}
+};
 
-exports.likerTopic = async (req, res) => {
-    // 1. On récupère les infos
+exports.likerTopic = async (req, res, next) => {
     const idTopic = req.params.idTopic;
     const vote = req.body.vote;
-
-    // ATTENTION : selon comment tu as codé ton middleware, c'est soit req.auth.id, soit req.auth.userId
     const idUtilisateurConnecte = req.auth.userId || req.auth.id;
 
-    // 2. Sécurité : on vérifie que la donnée est bien +1 ou -1
     if (vote !== 1 && vote !== -1) {
         return res.status(400).json({ message: "Le vote doit être +1 ou -1." });
     }
 
     try {
-        // 3. La requête d'insertion / mise à jour
         const sql = `
             INSERT INTO Evaluer (idUtilisateur, idTopic, vote)
             VALUES (?, ?, ?) 
             ON DUPLICATE KEY UPDATE vote = ?
         `;
-
         await db.query(sql, [idUtilisateurConnecte, idTopic, vote, vote]);
-
-        // 4. On renvoie un succès simple (pas besoin de topicTrouve ici !)
         res.status(200).json({ message: "Vote enregistré avec succès !" });
-
     } catch (erreur) {
-        console.error("Erreur lors de l'évaluation :", erreur);
-        res.status(500).json({ message: "Erreur serveur lors de l'enregistrement du vote." });
+        next(erreur);
     }
-}
-
+};
