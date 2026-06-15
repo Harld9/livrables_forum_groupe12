@@ -9,6 +9,18 @@ exports.inscrireClient = async (req, res) => {
         return res.status(400).json({ message: "Veuillez remplir tous les champs." });
     }
 
+    // Vérification du Pseudo (De 3 à 20 caractères, lettres, chiffres et tiret du bas uniquement)
+    const regexPseudo = /^[a-zA-Z0-9_]{3,20}$/;
+    if (!regexPseudo.test(pseudo)) {
+        return res.status(400).json({ message: "Le pseudo doit contenir entre 3 et 20 caractères, sans espaces ni caractères spéciaux." });
+    }
+
+    // (Au moins 8 caractères, 1 majuscule, 1 chiffre, 1 caractère spécial)
+    const regexMdp = /^(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
+    if (!regexMdp.test(motDePasse)) {
+        return res.status(400).json({ message: "Le mot de passe doit contenir au moins 8 caractères, dont 1 majuscule, 1 chiffre et 1 caractère spécial." });
+    }
+
     try {
         const [existant] = await db.query('SELECT idUtilisateur FROM Utilisateur WHERE email = ? OR pseudo = ?', [email, pseudo]);
 

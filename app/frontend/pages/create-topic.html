@@ -224,5 +224,32 @@
     </footer>
     <script src="/script/main.js"></script>
     <script src="/script/topic.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const labels = document.querySelectorAll(".tag-checkbox");
+
+        labels.forEach((label) => {
+          label.addEventListener("click", function (e) {
+            const radio = this.querySelector('input[type="radio"]');
+            radio.checked = true;
+
+            document.querySelectorAll(".tag-checkbox .tag").forEach((t) => {
+              t.style.background = "transparent";
+              t.style.borderColor = "#444";
+            });
+
+            const span = this.querySelector(".tag");
+            span.style.background = "#ff4d4d";
+            span.style.borderColor = "#ff4d4d";
+          });
+        });
+
+        const tagParDefaut = document.querySelector(
+          '.tag-checkbox input[value="1"]',
+        ).nextElementSibling;
+        tagParDefaut.style.background = "#ff4d4d";
+        tagParDefaut.style.borderColor = "#ff4d4d";
+      });
+    </script>
   </body>
 </html>

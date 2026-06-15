@@ -26,4 +26,6 @@ router.delete('/supprimerTopic/:idTopic', auth.verifierToken, topic.supprimerTop
 // On branche POST /api/likerTopic → Liker un message
 router.post('/likerTopic/:idTopic', auth.verifierToken, topic.likerTopic)
 
+router.put('/modifierTopic/:idTopic', auth.verifierToken, topic.modifierTopic)
+
 module.exports = router

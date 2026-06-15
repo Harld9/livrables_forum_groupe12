@@ -16,20 +16,24 @@ exports.listerTopics = async (req, res, next) => {
                 Topic.dateDeCreation, 
                 Topic.etat, 
                 Utilisateur.pseudo,
+                Tag.nom AS nomTag,
                 COALESCE(SUM(Evaluer.vote), 0) AS scoreTotal
             FROM Topic
             LEFT JOIN Utilisateur ON Topic.idUtilisateur = Utilisateur.idUtilisateur
+            LEFT JOIN Appartenir ON Topic.idTopic = Appartenir.idTopic
+            LEFT JOIN Tag ON Appartenir.idTag = Tag.idTag
             LEFT JOIN Evaluer ON Topic.idTopic = Evaluer.idTopic
         `;
         const parametresSQL = [];
 
         if (tagSelectionne && tagSelectionne !== '') {
-            sql += ` JOIN Appartenir ON Topic.idTopic = Appartenir.idTopic WHERE Appartenir.idTag = ? `;
+            sql += ` WHERE Appartenir.idTag = ? `;
             parametresSQL.push(tagSelectionne);
         }
 
-        sql += ` GROUP BY Topic.idTopic, Utilisateur.pseudo `;
+        sql += ` GROUP BY Topic.idTopic, Utilisateur.pseudo, Tag.nom `;
 
+        // Gestion du tri (Récents ou Populaires)
         if (tri === 'populaires') {
             sql += ` ORDER BY scoreTotal DESC, Topic.dateDeCreation DESC `;
         } else {
@@ -76,40 +80,33 @@ exports.creerTopic = async (req, res, next) => {
 
 exports.afficherTopic = async (req, res, next) => {
     const idTopic = req.params.idTopic;
-    const ordreTri = req.query.tri === 'desc' ? 'DESC' : 'ASC';
-
     try {
+        // On récupère le topic AVEC son tag
         const sqlTopic = `
-            SELECT Topic.*, Utilisateur.pseudo 
-            FROM Topic 
-            JOIN Utilisateur ON Topic.idUtilisateur = Utilisateur.idUtilisateur 
+            SELECT Topic.*, Utilisateur.pseudo, Tag.nom AS nomTag
+            FROM Topic
+            LEFT JOIN Utilisateur ON Topic.idUtilisateur = Utilisateur.idUtilisateur
+            LEFT JOIN Appartenir ON Topic.idTopic = Appartenir.idTopic
+            LEFT JOIN Tag ON Appartenir.idTag = Tag.idTag
             WHERE Topic.idTopic = ?
         `;
-        const [lignesTopic] = await db.query(sqlTopic, [idTopic]);
+        const [topics] = await db.query(sqlTopic, [idTopic]);
 
-        if (lignesTopic.length === 0) {
+        if (topics.length === 0) {
             return res.status(404).json({ message: "Topic introuvable." });
         }
 
-        const topicTrouve = lignesTopic[0];
-
-        const sqlScore = "SELECT SUM(vote) AS scoreTotal FROM Evaluer WHERE idTopic = ?";
-        const [resultatScore] = await db.query(sqlScore, [idTopic]);
-        topicTrouve.score = resultatScore[0].scoreTotal || 0;
-
+        // On récupère les messages liés
         const sqlMessages = `
             SELECT Message.*, Utilisateur.pseudo 
             FROM Message 
-            JOIN Utilisateur ON Message.idUtilisateur = Utilisateur.idUtilisateur 
-            WHERE Message.idTopic = ?
-            ORDER BY Message.idMessage ${ordreTri}
+            LEFT JOIN Utilisateur ON Message.idUtilisateur = Utilisateur.idUtilisateur
+            WHERE idTopic = ? 
+            ORDER BY dateDeCreation ASC
         `;
         const [messages] = await db.query(sqlMessages, [idTopic]);
 
-        res.status(200).json({
-            topic: topicTrouve,
-            messages: messages
-        });
+        res.status(200).json({ topic: topics[0], messages: messages });
     } catch (erreur) {
         next(erreur);
     }
@@ -221,5 +218,26 @@ exports.likerTopic = async (req, res, next) => {
         res.status(200).json({ message: "Vote enregistré avec succès !" });
     } catch (erreur) {
         next(erreur);
+    }
+};
+
+exports.modifierTopic = async (req, res) => {
+    const idTopic = req.params.idTopic;
+    const { titre, contenu } = req.body;
+
+    if (!titre || !contenu) {
+        return res.status(400).json({ message: "Le titre et le contenu sont obligatoires." });
+    }
+
+    try {
+        await db.query(
+            'UPDATE Topic SET titre = ?, contenu = ? WHERE idTopic = ?',
+            [titre, contenu, idTopic]
+        );
+
+        return res.status(200).json({ message: "Topic modifié avec succès." });
+    } catch (erreur) {
+        console.error("Erreur lors de la modification :", erreur);
+        return res.status(500).json({ message: "Erreur interne du serveur." });
     }
 };
