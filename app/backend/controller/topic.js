@@ -3,31 +3,40 @@ const db = require('../database/connexiondb.js');
 exports.listerTopics = async (req, res, next) => {
     const tagSelectionne = req.query.tag;
     const page = parseInt(req.query.page) || 1;
+    const tri = req.query.tri || 'recents';
     const limite = 10;
     const offset = (page - 1) * limite;
 
     try {
-        let sql;
+        let sql = `
+            SELECT 
+                Topic.idTopic, 
+                Topic.titre, 
+                Topic.contenu, 
+                Topic.dateDeCreation, 
+                Topic.etat, 
+                Utilisateur.pseudo,
+                COALESCE(SUM(Evaluer.vote), 0) AS scoreTotal
+            FROM Topic
+            LEFT JOIN Utilisateur ON Topic.idUtilisateur = Utilisateur.idUtilisateur
+            LEFT JOIN Evaluer ON Topic.idTopic = Evaluer.idTopic
+        `;
         const parametresSQL = [];
 
         if (tagSelectionne && tagSelectionne !== '') {
-            sql = `
-                SELECT topic.idTopic, topic.titre, topic.contenu, topic.dateDeCreation, topic.etat, Utilisateur.pseudo
-                FROM topic
-                LEFT JOIN Utilisateur ON topic.idUtilisateur = Utilisateur.idUtilisateur
-                JOIN appartenir ON topic.idTopic = appartenir.idTopic
-                WHERE appartenir.idTag = ?
-            `;
+            sql += ` JOIN Appartenir ON Topic.idTopic = Appartenir.idTopic WHERE Appartenir.idTag = ? `;
             parametresSQL.push(tagSelectionne);
-        } else {
-            sql = `
-                SELECT topic.idTopic, topic.titre, topic.contenu, topic.dateDeCreation, topic.etat, Utilisateur.pseudo
-                FROM topic
-                LEFT JOIN Utilisateur ON topic.idUtilisateur = Utilisateur.idUtilisateur
-            `;
         }
 
-        sql += ` ORDER BY topic.dateDeCreation DESC LIMIT ? OFFSET ?`;
+        sql += ` GROUP BY Topic.idTopic, Utilisateur.pseudo `;
+
+        if (tri === 'populaires') {
+            sql += ` ORDER BY scoreTotal DESC, Topic.dateDeCreation DESC `;
+        } else {
+            sql += ` ORDER BY Topic.dateDeCreation DESC `;
+        }
+
+        sql += ` LIMIT ? OFFSET ?`;
         parametresSQL.push(limite, offset);
 
         const [resultat] = await db.query(sql, parametresSQL);
@@ -50,17 +59,16 @@ exports.creerTopic = async (req, res, next) => {
     try {
         const [existant] = await db.query('SELECT idTopic FROM Topic WHERE titre = ?', [titre]);
         if (existant.length > 0) {
-            return res.status(409).json({ message: 'Un topic avec ce titre, existe déjà.' });
+            return res.status(409).json({ message: 'Un topic avec ce titre existe déjà.' });
         }
 
-        const sql = `INSERT INTO Topic (titre, contenu, idUtilisateur, dateDeCreation ) VALUES (?, ?, ?, CURDATE())`;
+        const sql = `INSERT INTO Topic (titre, contenu, idUtilisateur, dateDeCreation) VALUES (?, ?, ?, NOW())`;
         const sqlAppartenir = `INSERT INTO Appartenir (idTopic, idTag) VALUES (?, ?)`;
 
         const [resultat] = await db.query(sql, [titre, contenu, idUtilisateur]);
         await db.query(sqlAppartenir, [resultat.insertId, tags]);
 
         res.status(201).json({ message: 'Publication du topic réussie !', id: resultat.insertId });
-
     } catch (erreur) {
         next(erreur);
     }
@@ -102,7 +110,6 @@ exports.afficherTopic = async (req, res, next) => {
             topic: topicTrouve,
             messages: messages
         });
-
     } catch (erreur) {
         next(erreur);
     }
@@ -118,7 +125,7 @@ exports.creerMessage = async (req, res, next) => {
     }
 
     try {
-        const sql = `INSERT INTO Message (contenu, idUtilisateur, idTopic, dateDeCreation) VALUES (?, ?, ?, CURDATE())`;
+        const sql = `INSERT INTO Message (contenu, idUtilisateur, idTopic, dateDeCreation) VALUES (?, ?, ?, NOW())`;
         const [resultat] = await db.query(sql, [contenu, idUtilisateur, idTopic]);
         res.status(201).json({ message: 'Publication du message réussie !', id: resultat.insertId });
     } catch (erreur) {
@@ -162,7 +169,7 @@ exports.supprimerMessage = async (req, res, next) => {
         const estProprietaire = resultat[0].idUtilisateur === idUtilisateurConnecte;
 
         if (!estProprietaire && !estAdmin) {
-            return res.status(403).json({ message: "Action non autorisée : vous n'avez pas les droits." });
+            return res.status(403).json({ message: "Action non autorisée." });
         }
 
         await db.query('DELETE FROM Message WHERE idMessage = ?', [idMessage]);
@@ -185,7 +192,7 @@ exports.supprimerTopic = async (req, res, next) => {
         const estProprietaire = resultat[0].idUtilisateur === idUtilisateurConnecte;
 
         if (!estProprietaire && !estAdmin) {
-            return res.status(403).json({ message: "Action non autorisée : vous n'avez pas les droits." });
+            return res.status(403).json({ message: "Action non autorisée." });
         }
 
         await db.query('DELETE FROM Topic WHERE idTopic = ?', [idTopic]);

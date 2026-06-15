@@ -19,7 +19,6 @@
 
         <nav class="main-nav">
           <a href="/" class="nav-link">Accueil</a>
-          <a href="/topics" class="nav-link">Topics</a>
           <a href="/help" class="nav-link">Aide</a>
           <a href="/connexion" class="nav-link nav-cta" id="boutonconnexion"
             >Se connecter</a
@@ -41,27 +40,112 @@
 
           <div class="hero-actions">
             <a href="/create-topic" class="btn btn-primary">Créer un topic</a>
-            <a href="/topics" class="btn btn-ghost">Explorer les discussions</a>
           </div>
         </section>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; background-color: var(--bg-overlay, #1e1e24); padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border, #333);">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-overlay, #1e1e24);
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border, #333);
+          "
+        >
+          <form
+            class="search-form"
+            style="margin: 0; display: flex; gap: 10px; width: 40%"
+          >
+            <input
+              class="search-input"
+              id="search-input"
+              type="text"
+              placeholder="Rechercher un topic..."
+              style="width: 100%"
+            />
+            <button class="btn btn-primary" id="btn-rechercher">
+              Rechercher
+            </button>
+          </form>
 
-        <form class="search-form" style="margin: 0; display: flex; gap: 10px; width: 40%;">
-          <input class="search-input" id="search-input" type="text" placeholder="Rechercher un topic..." style="width: 100%;" />
-          <button class="btn btn-primary" id="btn-rechercher">Rechercher</button>
-        </form>
-
-        <div style="display: flex; gap: 20px; align-items: center;">
-          <div style="display: flex; gap: 8px;">
-            <button class="btn tag" style="border: 1px solid #444; border-radius: 20px; padding: 5px 12px; background: transparent; color: #fff; cursor: pointer;" onclick="filtrerParTag('')">Tous</button>
-            <button class="btn tag" style="border: 1px solid #444; border-radius: 20px; padding: 5px 12px; background: transparent; color: #fff; cursor: pointer;" onclick="filtrerParTag('1')">Film</button>
-            <button class="btn tag" style="border: 1px solid #444; border-radius: 20px; padding: 5px 12px; background: transparent; color: #fff; cursor: pointer;" onclick="filtrerParTag('2')">Série</button>
-            <button class="btn tag" style="border: 1px solid #444; border-radius: 20px; padding: 5px 12px; background: transparent; color: #fff; cursor: pointer;" onclick="filtrerParTag('3')">Anime</button>
-            <button class="btn tag" style="border: 1px solid #444; border-radius: 20px; padding: 5px 12px; background: transparent; color: #fff; cursor: pointer;" onclick="filtrerParTag('4')">Question</button>
+          <div style="display: flex; gap: 20px; align-items: center">
+            <div style="display: flex; gap: 8px">
+              <button
+                class="btn tag"
+                style="
+                  border: 1px solid #444;
+                  border-radius: 20px;
+                  padding: 5px 12px;
+                  background: transparent;
+                  color: #fff;
+                  cursor: pointer;
+                "
+                onclick="filtrerParTag('')"
+              >
+                Tous
+              </button>
+              <button
+                class="btn tag"
+                style="
+                  border: 1px solid #444;
+                  border-radius: 20px;
+                  padding: 5px 12px;
+                  background: transparent;
+                  color: #fff;
+                  cursor: pointer;
+                "
+                onclick="filtrerParTag('1')"
+              >
+                Film
+              </button>
+              <button
+                class="btn tag"
+                style="
+                  border: 1px solid #444;
+                  border-radius: 20px;
+                  padding: 5px 12px;
+                  background: transparent;
+                  color: #fff;
+                  cursor: pointer;
+                "
+                onclick="filtrerParTag('2')"
+              >
+                Série
+              </button>
+              <button
+                class="btn tag"
+                style="
+                  border: 1px solid #444;
+                  border-radius: 20px;
+                  padding: 5px 12px;
+                  background: transparent;
+                  color: #fff;
+                  cursor: pointer;
+                "
+                onclick="filtrerParTag('3')"
+              >
+                Anime
+              </button>
+              <button
+                class="btn tag"
+                style="
+                  border: 1px solid #444;
+                  border-radius: 20px;
+                  padding: 5px 12px;
+                  background: transparent;
+                  color: #fff;
+                  cursor: pointer;
+                "
+                onclick="filtrerParTag('4')"
+              >
+                Question
+              </button>
+            </div>
           </div>
-
-
+        </div>
         <section class="topics-list">
           <div class="topic-card">
             <div class="topic-card-num">🎬</div>
@@ -164,7 +248,7 @@
         <div class="filters-bar">
           <div class="tag-filter">
             <a href="/create-topic" class="btn btn-primary">Créer un topic</a>
-            <a href="/topics" class="btn btn-ghost">Voir les discussions</a>
+
             <a href="/help" class="btn btn-ghost">Support</a>
           </div>
         </div>

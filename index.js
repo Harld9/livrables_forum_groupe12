@@ -36,10 +36,6 @@ app.get('/guide', (req, res) => {
   res.sendFile(path.join(__dirname, 'app/frontend/pages/guide.html'));
 });
 
-app.get('/topics', (req, res) => {
-  res.sendFile(path.join(__dirname, 'app/frontend/pages/topics.html'));
-});
-
 app.get('/help', (req, res) => {
   res.sendFile(path.join(__dirname, 'app/frontend/pages/help.html'));
 });

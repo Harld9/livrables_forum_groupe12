@@ -170,7 +170,7 @@ function afficherErreur(message) {
 function formaterDate(dateString) {
     if (!dateString) return 'Aujourd\'hui';
     const date = new Date(dateString);
-    return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+    return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
 }
 
 function creerCarteTopic(topic, index) {
@@ -191,16 +191,14 @@ function creerCarteTopic(topic, index) {
     const meta = document.createElement('div');
     meta.className = 'topic-card-meta';
 
-    const badge = document.createElement('span');
-    badge.className = 'badge badge-open';
-    badge.textContent = 'Ouvert';
+    // Affichage du score uniquement
+    const badgeScore = document.createElement('span');
+    badgeScore.className = 'badge';
+    badgeScore.style.backgroundColor = '#444';
+    badgeScore.style.color = 'white';
+    badgeScore.textContent = '⭐ Score : ' + (topic.scoreTotal || 0);
 
-    const tag = document.createElement('span');
-    tag.className = 'tag tag-sm';
-    tag.textContent = 'Forum';
-
-    meta.appendChild(badge);
-    meta.appendChild(tag);
+    meta.appendChild(badgeScore);
 
     const info = document.createElement('div');
     info.className = 'topic-card-info';
@@ -236,12 +234,15 @@ async function afficherTopics() {
 
         liste.innerHTML = '';
 
+        const btnPrecedent = document.getElementById('btn-precedent');
+        const btnSuivant = document.getElementById('btn-suivant');
+        const spanPage = document.getElementById('numero-page');
+
         if (topics.length === 0) {
             liste.innerHTML = '<p style="color:white; padding:20px;">Aucun topic disponible.</p>';
-            const btnPrecedent = document.getElementById('btn-precedent');
-            const btnSuivant = document.getElementById('btn-suivant');
-            if (btnPrecedent) btnPrecedent.style.visibility = 'hidden';
+            if (btnPrecedent) btnPrecedent.style.visibility = pageActuelle > 1 ? 'visible' : 'hidden';
             if (btnSuivant) btnSuivant.style.visibility = 'hidden';
+            if (spanPage) spanPage.textContent = `Page ${pageActuelle}`;
             return;
         }
 
@@ -249,11 +250,7 @@ async function afficherTopics() {
             liste.appendChild(creerCarteTopic(topic, index));
         });
 
-        const spanPage = document.getElementById('numero-page');
         if (spanPage) spanPage.textContent = `Page ${pageActuelle}`;
-
-        const btnPrecedent = document.getElementById('btn-precedent');
-        const btnSuivant = document.getElementById('btn-suivant');
 
         if (btnPrecedent) {
             btnPrecedent.style.visibility = pageActuelle === 1 ? 'hidden' : 'visible';
